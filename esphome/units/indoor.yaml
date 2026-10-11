@@ -20,6 +20,10 @@ samsung_ac:
         id: ${unit_id}_climate
         name: "Climate"
         device_id: ${unit_id}
+        visual:
+          temperature_step:
+            target_temperature: ${target_step}
+            current_temperature: 0.1
       room_temperature:
         name: "Room temperature"
         device_id: ${unit_id}

@@ -34,6 +34,7 @@ encrypted ESPHome API. The Samsung app (SmartThings) keeps working next to it.
 | Single split | bridge + board + 1× `units/indoor.yaml` + `units/outdoor.yaml` |
 | Multi-split | bridge + board + 1× `units/indoor.yaml` **per indoor unit** + `units/outdoor.yaml` |
 | Model without a feature (e.g. no WindFree) | set `cap_windfree: "false"` (see the `cap_*` substitutions) |
+| Half-degree target temperature | set `target_step: "0.5"` (the AC accepts it; the Samsung app and remote show whole degrees) |
 
 ## Limits
 

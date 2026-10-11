@@ -19,6 +19,9 @@ substitutions:
   cap_longreach: "true"
   cap_vertical_swing: "true"
   cap_horizontal_swing: "true"
+  # Target temperature step: "1" (like the remote) or "0.5" (the AC accepts half degrees on the
+  # bus; the Samsung app and the remote still show whole degrees)
+  target_step: "1"
 
 esphome:
   project:

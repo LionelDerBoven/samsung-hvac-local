@@ -116,10 +116,19 @@ class IndoorUnitDevice extends Homey.Device {
       await this.setStoreValue('capsRevision', CAPS_REVISION).catch(this.error);
     }
 
+    await this.applyTemperatureStep();
+  }
+
+  /** Temperature range and step as configured on the bridge (target_step: 1 or 0.5 °C). */
+  async applyTemperatureStep() {
+    if (!this.traits) return;
     const { min, max, step } = this.traits;
+    const decimals = step < 1 ? 1 : 0;
     const opts = this.getCapabilityOptions('target_temperature') || {};
-    if (opts.min !== min || opts.max !== max || opts.step !== step) {
-      await this.setCapabilityOptions('target_temperature', { min, max, step }).catch(this.error);
+    if (opts.min !== min || opts.max !== max || opts.step !== step || opts.decimals !== decimals) {
+      await this.setCapabilityOptions('target_temperature', {
+        min, max, step, decimals,
+      }).catch(this.error);
     }
   }
 
@@ -135,6 +144,8 @@ class IndoorUnitDevice extends Homey.Device {
   async onState(key, value) {
     const role = this.roleByKey.get(key);
     if (!role) return;
+    // "Unknown" (e.g. right after a bridge restart, until the AC reports again): keep the last value.
+    if (value === null && role !== 'climate') return;
     switch (role) {
       case 'climate': await this.onClimate(value); break;
       case 'room_temperature':

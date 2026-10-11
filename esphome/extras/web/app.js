@@ -29,6 +29,8 @@ const PRESETS = [
 ];
 const SWINGS = [['OFF', 'Uit'], ['VERTICAL', 'Verticaal'], ['HORIZONTAL', 'Horizontaal'], ['BOTH', 'Beide']];
 const TMIN = 16, TMAX = 30;
+const tstep = () => parseFloat(st[CLIMATE]?.step) || 1; // from the bridge (climate visual step)
+const fmtT = v => (tstep() < 1 ? v.toFixed(1) : String(Math.round(v)));
 const LOGO = `<svg class="logo" viewBox="0 0 168 40" role="img" aria-label="HVAC Local"><g fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(2,2) scale(.56)"><rect x="6" y="12" width="52" height="22" rx="6"/><path d="M13 27h38"/><path d="M20 40c-3 4 3 7 0 12M32 40c-3 4 3 7 0 12M44 40c-3 4 3 7 0 12"/></g><text x="44" y="28" font-size="22" font-weight="800" fill="currentColor">HVAC <tspan fill="var(--blue)" font-weight="600">Local</tspan></text></svg>`;
 
 const st = {};            // entity-id → laatste toestand
@@ -183,8 +185,9 @@ function buildControl() {
   const bump = d => {
     const cur = pendingTarget ?? parseFloat(st[CLIMATE]?.target_temperature);
     if (isNaN(cur)) return;
-    pendingTarget = Math.min(TMAX, Math.max(TMIN, Math.round(cur) + d));
-    $('#tgt').textContent = pendingTarget;
+    const s = tstep();
+    pendingTarget = Math.min(TMAX, Math.max(TMIN, Math.round(cur / s) * s + d * s));
+    $('#tgt').textContent = fmtT(pendingTarget);
     clearTimeout(targetTimer);
     targetTimer = setTimeout(() => { climateSet({ target_temperature: pendingTarget }); setTimeout(() => pendingTarget = null, 4000); }, 600);
   };
@@ -261,7 +264,7 @@ function render() {
     if (on) lastOnMode = c.mode.toLowerCase();
     $('#pwr').classList.toggle('on', on);
     const tg = parseFloat(c.target_temperature);
-    if (pendingTarget == null) txt('#tgt', isNaN(tg) ? '–' : Math.round(tg));
+    if (pendingTarget == null) txt('#tgt', isNaN(tg) ? '–' : fmtT(tg));
     const ml = MODES.find(m => m[0].toUpperCase() === c.mode);
     txt('#stmode', on ? (ml ? ml[1] : c.mode) : 'Uit');
     const fan = c.custom_fan_mode || c.fan_mode, pre = c.custom_preset || c.preset;
