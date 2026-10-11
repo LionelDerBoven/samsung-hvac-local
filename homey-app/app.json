@@ -645,10 +645,11 @@
         },
         "button.filter_reset": {
           "title": {
-            "en": "Reset filter",
-            "nl": "Filter resetten",
-            "fr": "Réinitialiser le filtre"
-          }
+            "en": "Reset filter counter",
+            "nl": "Filterteller resetten",
+            "fr": "Réinitialiser le compteur du filtre"
+          },
+          "maintenanceAction": true
         },
         "alarm_generic": {
           "title": {

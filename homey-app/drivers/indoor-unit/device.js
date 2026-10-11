@@ -10,8 +10,8 @@ const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsu
 // Order of the pickers in the device view.
 const PICKERS = ['samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
 // Bump when capability options in the manifest change: affected capabilities are re-added once.
-const CAPS_REVISION = 2;
-const REVISED_CAPS = ['button.filter_reset']; // rev 2: filter reset is a visible button, not maintenance
+const CAPS_REVISION = 3;
+const REVISED_CAPS = ['button.filter_reset']; // rev 3: filter reset back to a maintenance action
 // Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
