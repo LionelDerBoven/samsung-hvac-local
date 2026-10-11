@@ -23,8 +23,10 @@ class SamsungHvacLocalApp extends Homey.App {
 
   /** Bridges announced on the network that follow the contract: [{ name, host, port, mac }]. */
   discoveredBridges() {
-    return Object.values(this.discovery.getDiscoveryResults())
-      .filter((r) => r.txt && r.txt.project_name === PROJECT_NAME)
+    const results = Object.values(this.discovery.getDiscoveryResults());
+    const bridges = results.filter((r) => r.txt && r.txt.project_name === PROJECT_NAME);
+    this.log(`Discovery: ${results.length} ESPHome node(s), ${bridges.length} HVAC Local bridge(s)`);
+    return bridges
       .map((r) => ({
         name: r.txt.friendly_name || r.name || r.host,
         host: r.address,
