@@ -23,7 +23,7 @@ class IndoorUnitDriver extends Homey.Driver {
     flow.getActionCard('reset_filter').registerRunListener(({ device }) => device.resetFilter());
 
     flow.getConditionCard('mode_is').registerRunListener(({ device, mode }) => (
-      device.getCapabilityValue('onoff') === true && device.getCapabilityValue('samsung_hvac_mode') === mode));
+      device.getCapabilityValue('samsung_hvac_mode') === mode));
     flow.getConditionCard('preset_is').registerRunListener(({ device, preset }) => (
       device.getCapabilityValue('samsung_preset') === preset));
   }

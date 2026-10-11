@@ -4,11 +4,12 @@
     "nl": "Binnenunit",
     "fr": "Unité intérieure"
   },
-  "class": "thermostat",
+  "class": "airconditioning",
   "capabilities": [
     "onoff",
     "target_temperature",
     "measure_temperature",
+    "samsung_target_temperature",
     "measure_humidity",
     "measure_temperature.outdoor",
     "measure_power",

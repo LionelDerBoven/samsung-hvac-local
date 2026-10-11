@@ -570,11 +570,12 @@
         "nl": "Binnenunit",
         "fr": "Unité intérieure"
       },
-      "class": "thermostat",
+      "class": "airconditioning",
       "capabilities": [
         "onoff",
         "target_temperature",
         "measure_temperature",
+        "samsung_target_temperature",
         "measure_humidity",
         "measure_temperature.outdoor",
         "measure_power",
@@ -827,6 +828,14 @@
       "icon": "/assets/capabilities/mode.svg",
       "values": [
         {
+          "id": "off",
+          "title": {
+            "en": "Off",
+            "nl": "Uit",
+            "fr": "Arrêt"
+          }
+        },
+        {
           "id": "cool",
           "title": {
             "en": "Cool",
@@ -983,6 +992,23 @@
           }
         }
       ]
+    },
+    "samsung_target_temperature": {
+      "type": "number",
+      "title": {
+        "en": "Target temperature",
+        "nl": "Doeltemperatuur",
+        "fr": "Température de consigne"
+      },
+      "units": {
+        "en": "°C"
+      },
+      "decimals": 1,
+      "getable": true,
+      "setable": false,
+      "uiComponent": null,
+      "insights": false,
+      "icon": "/assets/capabilities/target.svg"
     }
   },
   "discovery": {

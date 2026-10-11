@@ -11,6 +11,14 @@
   "icon": "/assets/capabilities/mode.svg",
   "values": [
     {
+      "id": "off",
+      "title": {
+        "en": "Off",
+        "nl": "Uit",
+        "fr": "Arrêt"
+      }
+    },
+    {
       "id": "cool",
       "title": {
         "en": "Cool",

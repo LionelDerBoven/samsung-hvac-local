@@ -15,7 +15,7 @@ const REVISED_CAPS = ['button.filter_reset']; // rev 3: filter reset back to a m
 // Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
-  'samsung_fan_speed', 'samsung_swing', 'samsung_preset',
+  'samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_target_temperature',
   'samsung_filter_usage', 'alarm_generic.filter', 'button.filter_reset', 'onoff.auto_clean',
   'alarm_generic', 'samsung_error_code', 'measure_temperature.eva_in', 'measure_temperature.eva_out',
   'button.restart',
@@ -32,8 +32,7 @@ class IndoorUnitDevice extends Homey.Device {
     this.onBridgeState = (key, value) => this.onState(key, value);
     this.onBridgeStatus = (online, err) => this.onStatus(online, err);
 
-    // Class "thermostat": Homey's tile then shows target and room temperature (like other climate devices).
-    if (this.getClass() !== 'thermostat') await this.setClass('thermostat').catch(this.error);
+    if (this.getClass() !== 'airconditioning') await this.setClass('airconditioning').catch(this.error);
 
     this.registerMultipleCapabilityListener(CLIMATE_CAPS, (values) => this.onClimateChange(values), 300);
     this.registerCapabilityListener('onoff.auto_clean', (value) => this.sendSwitch('auto_clean', value));
@@ -101,6 +100,7 @@ class IndoorUnitDevice extends Homey.Device {
     wantIf(roles.eva_in, 'measure_temperature.eva_in');
     wantIf(roles.eva_out, 'measure_temperature.eva_out');
     wantIf(this.bridgeRoles.restart, 'button.restart');
+    want.add('samsung_target_temperature');
 
     for (const cap of OPTIONAL) {
       if (want.has(cap) && !this.hasCapability(cap)) await this.addCapability(cap).catch(this.error);
@@ -171,19 +171,21 @@ class IndoorUnitDevice extends Homey.Device {
     const wasMode = this.getCapabilityValue('samsung_hvac_mode');
     const wasPreset = this.getCapabilityValue('samsung_preset');
     await this.update('onoff', c.on);
-    // While off, show the mode the AC returns to when switched on.
-    await this.update('samsung_hvac_mode', c.mode || this.lastMode);
+    await this.update('samsung_hvac_mode', c.mode || 'off');
     if (c.mode && c.mode !== this.lastMode) {
       this.lastMode = c.mode;
       this.setStoreValue('lastMode', c.mode).catch(this.error);
     }
-    if (c.target !== null) await this.update('target_temperature', c.target);
+    if (c.target !== null) {
+      await this.update('target_temperature', c.target);
+      await this.update('samsung_target_temperature', c.target); // selectable as status indicator
+    }
     if (c.current !== null) await this.update('measure_temperature', c.current);
     if (c.fan) await this.update('samsung_fan_speed', c.fan);
     if (c.swing) await this.update('samsung_swing', c.swing);
     if (c.preset) await this.update('samsung_preset', c.preset);
     // Flow triggers: only real changes of a running AC, not the replay at startup.
-    if (this.ready && c.mode && wasMode !== null && c.mode !== wasMode) {
+    if (this.ready && c.mode && wasMode && wasMode !== 'off' && c.mode !== wasMode) {
       this.driver.triggerModeChanged(this, c.mode);
     }
     if (this.ready && c.preset && wasPreset !== null && c.preset !== wasPreset) {
@@ -206,8 +208,9 @@ class IndoorUnitDevice extends Homey.Device {
     const entity = this.unit.roles.climate;
     const fields = {};
     let mode = values.samsung_hvac_mode;
-    if (values.onoff === false) {
+    if (values.onoff === false || mode === 'off') {
       fields.mode = 0;
+      mode = undefined;
     } else if (mode || values.onoff === true) {
       mode = mode || this.lastMode;
       if (this.traits && !this.traits.modes.includes(mode)) mode = this.traits.modes[0];

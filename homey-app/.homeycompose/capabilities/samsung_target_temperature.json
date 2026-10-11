@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Target temperature",
+    "nl": "Doeltemperatuur",
+    "fr": "Température de consigne"
+  },
+  "units": {
+    "en": "°C"
+  },
+  "decimals": 1,
+  "getable": true,
+  "setable": false,
+  "uiComponent": null,
+  "insights": false,
+  "icon": "/assets/capabilities/target.svg"
+}
