@@ -579,10 +579,10 @@
         "measure_temperature.outdoor",
         "measure_power",
         "meter_power",
+        "samsung_hvac_mode",
         "samsung_fan_speed",
         "samsung_swing",
         "samsung_preset",
-        "samsung_hvac_mode",
         "onoff.auto_clean",
         "samsung_filter_usage",
         "alarm_generic.filter",
@@ -645,11 +645,10 @@
         },
         "button.filter_reset": {
           "title": {
-            "en": "Reset filter counter",
-            "nl": "Filterteller resetten",
-            "fr": "Réinitialiser le compteur du filtre"
-          },
-          "maintenanceAction": true
+            "en": "Reset filter",
+            "nl": "Filter resetten",
+            "fr": "Réinitialiser le filtre"
+          }
         },
         "alarm_generic": {
           "title": {

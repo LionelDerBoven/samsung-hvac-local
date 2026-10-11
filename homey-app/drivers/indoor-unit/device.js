@@ -7,8 +7,11 @@ const {
 
 // Capabilities that are sent to the AC as one climate command (bundled, see onClimateChange).
 const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
-// The picker tab opens on the last picker, so the mode comes last.
-const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
+// Order of the pickers in the device view.
+const PICKERS = ['samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
+// Bump when capability options in the manifest change: affected capabilities are re-added once.
+const CAPS_REVISION = 2;
+const REVISED_CAPS = ['button.filter_reset']; // rev 2: filter reset is a visible button, not maintenance
 // Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
@@ -101,6 +104,14 @@ class IndoorUnitDevice extends Homey.Device {
       if (!want.has(cap) && this.hasCapability(cap)) await this.removeCapability(cap).catch(this.error);
     }
     await this.orderPickers();
+    if ((this.getStoreValue('capsRevision') || 1) < CAPS_REVISION) {
+      for (const cap of REVISED_CAPS) {
+        if (!this.hasCapability(cap)) continue;
+        await this.removeCapability(cap).catch(this.error);
+        await this.addCapability(cap).catch(this.error);
+      }
+      await this.setStoreValue('capsRevision', CAPS_REVISION).catch(this.error);
+    }
 
     const { min, max, step } = this.traits;
     const opts = this.getCapabilityOptions('target_temperature') || {};
