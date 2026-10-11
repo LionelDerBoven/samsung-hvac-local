@@ -6,7 +6,9 @@
     "fr": "Température de consigne"
   },
   "units": {
-    "en": "°C"
+    "en": "°C",
+    "nl": "°C",
+    "fr": "°C"
   },
   "decimals": 1,
   "getable": true,

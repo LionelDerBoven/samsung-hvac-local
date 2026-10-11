@@ -804,7 +804,9 @@
         "fr": "Utilisation du filtre"
       },
       "units": {
-        "en": "%"
+        "en": "%",
+        "nl": "%",
+        "fr": "%"
       },
       "min": 0,
       "max": 100,
@@ -1001,7 +1003,9 @@
         "fr": "Température de consigne"
       },
       "units": {
-        "en": "°C"
+        "en": "°C",
+        "nl": "°C",
+        "fr": "°C"
       },
       "decimals": 1,
       "getable": true,

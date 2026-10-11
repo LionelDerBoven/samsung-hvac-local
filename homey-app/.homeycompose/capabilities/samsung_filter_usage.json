@@ -6,7 +6,9 @@
     "fr": "Utilisation du filtre"
   },
   "units": {
-    "en": "%"
+    "en": "%",
+    "nl": "%",
+    "fr": "%"
   },
   "min": 0,
   "max": 100,
