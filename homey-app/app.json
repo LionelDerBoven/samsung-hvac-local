@@ -37,6 +37,532 @@
   "bugs": {
     "url": "https://github.com/LionelDerBoven/samsung-hvac-local/issues"
   },
+  "flow": {
+    "triggers": [
+      {
+        "id": "mode_changed",
+        "title": {
+          "en": "The mode changed",
+          "nl": "De modus veranderde",
+          "fr": "Le mode a changé"
+        },
+        "hint": {
+          "en": "Only while the air conditioner is on.",
+          "nl": "Alleen terwijl de airco aan staat.",
+          "fr": "Uniquement quand le climatiseur est allumé."
+        },
+        "tokens": [
+          {
+            "name": "mode",
+            "type": "string",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "fr": "Mode"
+            },
+            "example": {
+              "en": "Cool",
+              "nl": "Koelen",
+              "fr": "Refroidir"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          }
+        ]
+      },
+      {
+        "id": "preset_changed",
+        "title": {
+          "en": "The special mode changed",
+          "nl": "De speciale modus veranderde",
+          "fr": "Le mode spécial a changé"
+        },
+        "tokens": [
+          {
+            "name": "preset",
+            "type": "string",
+            "title": {
+              "en": "Special mode",
+              "nl": "Speciale modus",
+              "fr": "Mode spécial"
+            },
+            "example": "WindFree"
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "mode_is",
+        "title": {
+          "en": "Mode is !{{|not}} …",
+          "nl": "Modus is !{{|niet}} …",
+          "fr": "Le mode !{{est|n'est pas}} …"
+        },
+        "titleFormatted": {
+          "en": "Mode is !{{|not}} [[mode]]",
+          "nl": "Modus is !{{|niet}} [[mode]]",
+          "fr": "Le mode !{{est|n'est pas}} [[mode]]"
+        },
+        "hint": {
+          "en": "False while the air conditioner is off.",
+          "nl": "Onwaar zolang de airco uit staat.",
+          "fr": "Faux tant que le climatiseur est éteint."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              {
+                "id": "cool",
+                "label": {
+                  "en": "Cool",
+                  "nl": "Koelen",
+                  "fr": "Refroidir"
+                }
+              },
+              {
+                "id": "heat",
+                "label": {
+                  "en": "Heat",
+                  "nl": "Verwarmen",
+                  "fr": "Chauffer"
+                }
+              },
+              {
+                "id": "dry",
+                "label": {
+                  "en": "Dry",
+                  "nl": "Drogen",
+                  "fr": "Déshumidifier"
+                }
+              },
+              {
+                "id": "fan",
+                "label": {
+                  "en": "Fan",
+                  "nl": "Ventileren",
+                  "fr": "Ventiler"
+                }
+              },
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "fr": "Auto"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "preset_is",
+        "title": {
+          "en": "Special mode is !{{|not}} …",
+          "nl": "Speciale modus is !{{|niet}} …",
+          "fr": "Le mode spécial !{{est|n'est pas}} …"
+        },
+        "titleFormatted": {
+          "en": "Special mode is !{{|not}} [[preset]]",
+          "nl": "Speciale modus is !{{|niet}} [[preset]]",
+          "fr": "Le mode spécial !{{est|n'est pas}} [[preset]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "preset",
+            "values": [
+              {
+                "id": "none",
+                "label": {
+                  "en": "None",
+                  "nl": "Geen",
+                  "fr": "Aucun"
+                }
+              },
+              {
+                "id": "windfree",
+                "label": {
+                  "en": "WindFree",
+                  "nl": "WindFree",
+                  "fr": "WindFree"
+                }
+              },
+              {
+                "id": "quiet",
+                "label": {
+                  "en": "Quiet",
+                  "nl": "Stil",
+                  "fr": "Silencieux"
+                }
+              },
+              {
+                "id": "fast",
+                "label": {
+                  "en": "Fast",
+                  "nl": "Snel",
+                  "fr": "Rapide"
+                }
+              },
+              {
+                "id": "eco",
+                "label": {
+                  "en": "Eco",
+                  "nl": "Eco",
+                  "fr": "Éco"
+                }
+              },
+              {
+                "id": "sleep",
+                "label": {
+                  "en": "Sleep",
+                  "nl": "Slapen",
+                  "fr": "Sommeil"
+                }
+              },
+              {
+                "id": "longreach",
+                "label": {
+                  "en": "Long reach",
+                  "nl": "Lange reikwijdte",
+                  "fr": "Longue portée"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "set_mode",
+        "title": {
+          "en": "Set the mode",
+          "nl": "Zet de modus",
+          "fr": "Régler le mode"
+        },
+        "titleFormatted": {
+          "en": "Set the mode to [[mode]]",
+          "nl": "Zet de modus op [[mode]]",
+          "fr": "Régler le mode sur [[mode]]"
+        },
+        "hint": {
+          "en": "Also switches the air conditioner on.",
+          "nl": "Zet de airco ook aan.",
+          "fr": "Allume aussi le climatiseur."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "values": [
+              {
+                "id": "cool",
+                "label": {
+                  "en": "Cool",
+                  "nl": "Koelen",
+                  "fr": "Refroidir"
+                }
+              },
+              {
+                "id": "heat",
+                "label": {
+                  "en": "Heat",
+                  "nl": "Verwarmen",
+                  "fr": "Chauffer"
+                }
+              },
+              {
+                "id": "dry",
+                "label": {
+                  "en": "Dry",
+                  "nl": "Drogen",
+                  "fr": "Déshumidifier"
+                }
+              },
+              {
+                "id": "fan",
+                "label": {
+                  "en": "Fan",
+                  "nl": "Ventileren",
+                  "fr": "Ventiler"
+                }
+              },
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "fr": "Auto"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_fan_speed",
+        "title": {
+          "en": "Set the fan speed",
+          "nl": "Zet de ventilatorsnelheid",
+          "fr": "Régler la vitesse du ventilateur"
+        },
+        "titleFormatted": {
+          "en": "Set the fan speed to [[fan]]",
+          "nl": "Zet de ventilatorsnelheid op [[fan]]",
+          "fr": "Régler la vitesse du ventilateur sur [[fan]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "fan",
+            "values": [
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "fr": "Auto"
+                }
+              },
+              {
+                "id": "low",
+                "label": {
+                  "en": "Low",
+                  "nl": "Laag",
+                  "fr": "Basse"
+                }
+              },
+              {
+                "id": "medium",
+                "label": {
+                  "en": "Medium",
+                  "nl": "Midden",
+                  "fr": "Moyenne"
+                }
+              },
+              {
+                "id": "high",
+                "label": {
+                  "en": "High",
+                  "nl": "Hoog",
+                  "fr": "Haute"
+                }
+              },
+              {
+                "id": "turbo",
+                "label": {
+                  "en": "Turbo",
+                  "nl": "Turbo",
+                  "fr": "Turbo"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_swing",
+        "title": {
+          "en": "Set the air direction",
+          "nl": "Zet de windrichting",
+          "fr": "Régler la direction de l'air"
+        },
+        "titleFormatted": {
+          "en": "Set the air direction to [[swing]]",
+          "nl": "Zet de windrichting op [[swing]]",
+          "fr": "Régler la direction de l'air sur [[swing]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "swing",
+            "values": [
+              {
+                "id": "off",
+                "label": {
+                  "en": "Fixed",
+                  "nl": "Vast",
+                  "fr": "Fixe"
+                }
+              },
+              {
+                "id": "vertical",
+                "label": {
+                  "en": "Vertical swing",
+                  "nl": "Verticaal zwaaien",
+                  "fr": "Oscillation verticale"
+                }
+              },
+              {
+                "id": "horizontal",
+                "label": {
+                  "en": "Horizontal swing",
+                  "nl": "Horizontaal zwaaien",
+                  "fr": "Oscillation horizontale"
+                }
+              },
+              {
+                "id": "both",
+                "label": {
+                  "en": "Both directions",
+                  "nl": "Beide richtingen",
+                  "fr": "Les deux directions"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_preset",
+        "title": {
+          "en": "Set the special mode",
+          "nl": "Zet de speciale modus",
+          "fr": "Régler le mode spécial"
+        },
+        "titleFormatted": {
+          "en": "Set the special mode to [[preset]]",
+          "nl": "Zet de speciale modus op [[preset]]",
+          "fr": "Régler le mode spécial sur [[preset]]"
+        },
+        "hint": {
+          "en": "WindFree only works in Cool or Dry mode.",
+          "nl": "WindFree werkt enkel in Koelen of Drogen.",
+          "fr": "WindFree ne fonctionne qu'en mode Refroidir ou Déshumidifier."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "preset",
+            "values": [
+              {
+                "id": "none",
+                "label": {
+                  "en": "None",
+                  "nl": "Geen",
+                  "fr": "Aucun"
+                }
+              },
+              {
+                "id": "windfree",
+                "label": {
+                  "en": "WindFree",
+                  "nl": "WindFree",
+                  "fr": "WindFree"
+                }
+              },
+              {
+                "id": "quiet",
+                "label": {
+                  "en": "Quiet",
+                  "nl": "Stil",
+                  "fr": "Silencieux"
+                }
+              },
+              {
+                "id": "fast",
+                "label": {
+                  "en": "Fast",
+                  "nl": "Snel",
+                  "fr": "Rapide"
+                }
+              },
+              {
+                "id": "eco",
+                "label": {
+                  "en": "Eco",
+                  "nl": "Eco",
+                  "fr": "Éco"
+                }
+              },
+              {
+                "id": "sleep",
+                "label": {
+                  "en": "Sleep",
+                  "nl": "Slapen",
+                  "fr": "Sommeil"
+                }
+              },
+              {
+                "id": "longreach",
+                "label": {
+                  "en": "Long reach",
+                  "nl": "Lange reikwijdte",
+                  "fr": "Longue portée"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "reset_filter",
+        "title": {
+          "en": "Reset the filter counter",
+          "nl": "Reset de filterteller",
+          "fr": "Réinitialiser le compteur du filtre"
+        },
+        "hint": {
+          "en": "Do this after cleaning the filter.",
+          "nl": "Doe dit na het reinigen van de filter.",
+          "fr": "À faire après avoir nettoyé le filtre."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "name": {
@@ -49,14 +575,23 @@
         "onoff",
         "target_temperature",
         "measure_temperature",
-        "samsung_hvac_mode",
-        "samsung_fan_speed",
-        "samsung_swing",
-        "samsung_preset",
         "measure_humidity",
         "measure_temperature.outdoor",
         "measure_power",
-        "meter_power"
+        "meter_power",
+        "samsung_fan_speed",
+        "samsung_swing",
+        "samsung_preset",
+        "samsung_hvac_mode",
+        "onoff.auto_clean",
+        "samsung_filter_usage",
+        "alarm_generic.filter",
+        "button.filter_reset",
+        "alarm_generic",
+        "samsung_error_code",
+        "measure_temperature.eva_in",
+        "measure_temperature.eva_out",
+        "button.restart"
       ],
       "capabilitiesOptions": {
         "target_temperature": {
@@ -92,6 +627,60 @@
             "nl": "Energie (buitenunit)",
             "fr": "Énergie (unité extérieure)"
           }
+        },
+        "onoff.auto_clean": {
+          "title": {
+            "en": "Auto clean",
+            "nl": "Automatische reiniging",
+            "fr": "Nettoyage automatique"
+          },
+          "uiQuickAction": false
+        },
+        "alarm_generic.filter": {
+          "title": {
+            "en": "Clean the filter",
+            "nl": "Filter reinigen",
+            "fr": "Nettoyer le filtre"
+          }
+        },
+        "button.filter_reset": {
+          "title": {
+            "en": "Reset filter counter",
+            "nl": "Filterteller resetten",
+            "fr": "Réinitialiser le compteur du filtre"
+          },
+          "maintenanceAction": true
+        },
+        "alarm_generic": {
+          "title": {
+            "en": "Fault",
+            "nl": "Storing",
+            "fr": "Panne"
+          }
+        },
+        "measure_temperature.eva_in": {
+          "title": {
+            "en": "Evaporator in",
+            "nl": "Verdamper in",
+            "fr": "Évaporateur entrée"
+          },
+          "insights": false
+        },
+        "measure_temperature.eva_out": {
+          "title": {
+            "en": "Evaporator out",
+            "nl": "Verdamper uit",
+            "fr": "Évaporateur sortie"
+          },
+          "insights": false
+        },
+        "button.restart": {
+          "title": {
+            "en": "Restart bridge",
+            "nl": "Bridge herstarten",
+            "fr": "Redémarrer le pont"
+          },
+          "maintenanceAction": true
         }
       },
       "platforms": [
@@ -138,6 +727,20 @@
     }
   ],
   "capabilities": {
+    "samsung_error_code": {
+      "type": "number",
+      "title": {
+        "en": "Error code",
+        "nl": "Foutcode",
+        "fr": "Code d'erreur"
+      },
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": false,
+      "icon": "/assets/capabilities/error.svg"
+    },
     "samsung_fan_speed": {
       "type": "enum",
       "title": {
@@ -191,6 +794,25 @@
           }
         }
       ]
+    },
+    "samsung_filter_usage": {
+      "type": "number",
+      "title": {
+        "en": "Filter usage",
+        "nl": "Filtergebruik",
+        "fr": "Utilisation du filtre"
+      },
+      "units": {
+        "en": "%"
+      },
+      "min": 0,
+      "max": 100,
+      "decimals": 0,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "insights": true,
+      "icon": "/assets/capabilities/filter.svg"
     },
     "samsung_hvac_mode": {
       "type": "enum",

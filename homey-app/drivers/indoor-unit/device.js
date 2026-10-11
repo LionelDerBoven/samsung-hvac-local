@@ -7,19 +7,32 @@ const {
 
 // Capabilities that are sent to the AC as one climate command (bundled, see onClimateChange).
 const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
-const ENERGY_CAPS = ['measure_power', 'meter_power', 'measure_temperature.outdoor'];
+// The picker tab opens on the last picker, so the mode comes last.
+const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
+// Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
+const OPTIONAL = [
+  'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
+  'samsung_fan_speed', 'samsung_swing', 'samsung_preset',
+  'samsung_filter_usage', 'alarm_generic.filter', 'button.filter_reset', 'onoff.auto_clean',
+  'alarm_generic', 'samsung_error_code', 'measure_temperature.eva_in', 'measure_temperature.eva_out',
+  'button.restart',
+];
 const WINDFREE_MODES = ['cool', 'dry'];
 
 class IndoorUnitDevice extends Homey.Device {
 
   async onInit() {
     this.unit = null;
-    this.roleByKey = new Map(); // entity key → role, for this unit only (~15 entries)
+    this.outdoor = null;
+    this.roleByKey = new Map(); // entity key → role, for this unit only (~20 entries)
     this.lastMode = this.getStoreValue('lastMode') || 'cool';
     this.onBridgeState = (key, value) => this.onState(key, value);
     this.onBridgeStatus = (online, err) => this.onStatus(online, err);
 
     this.registerMultipleCapabilityListener(CLIMATE_CAPS, (values) => this.onClimateChange(values), 300);
+    this.registerCapabilityListener('onoff.auto_clean', (value) => this.sendSwitch('auto_clean', value));
+    this.registerCapabilityListener('button.filter_reset', () => this.resetFilter());
+    this.registerCapabilityListener('button.restart', () => this.restartBridge());
 
     const store = this.getStore();
     this.bridge = this.homey.app.getBridge(store);
@@ -46,12 +59,11 @@ class IndoorUnitDevice extends Homey.Device {
     this.unit = unit;
     this.roleByKey.clear();
     for (const [role, e] of Object.entries(unit.roles)) this.roleByKey.set(e.key, role);
-    // Single split: the outdoor unit's energy and temperature belong to this device.
-    const outdoor = this.bridge.isSingleSplit ? this.bridge.outdoorUnit : null;
-    this.outdoor = outdoor;
-    if (outdoor) for (const [role, e] of Object.entries(outdoor.roles)) this.roleByKey.set(e.key, role);
-    const bridgeRoles = this.bridge.units.bridge.roles;
-    if (bridgeRoles.bus_active) this.roleByKey.set(bridgeRoles.bus_active.key, 'bus_active');
+    // Single split: the outdoor unit (energy, outdoor temperature, error code) belongs to this device.
+    this.outdoor = this.bridge.isSingleSplit ? this.bridge.outdoorUnit : null;
+    if (this.outdoor) for (const [role, e] of Object.entries(this.outdoor.roles)) this.roleByKey.set(e.key, role);
+    this.bridgeRoles = this.bridge.units.bridge.roles;
+    if (this.bridgeRoles.bus_active) this.roleByKey.set(this.bridgeRoles.bus_active.key, 'bus_active');
 
     await this.syncCapabilities();
     await this.setAvailable().catch(this.error);
@@ -63,23 +75,33 @@ class IndoorUnitDevice extends Homey.Device {
 
   async syncCapabilities() {
     const { roles } = this.unit;
-    const want = new Set(['onoff', 'target_temperature', 'measure_temperature', 'samsung_hvac_mode']);
-    if (roles.room_humidity) want.add('measure_humidity');
-    if (this.outdoor) {
-      if (this.outdoor.roles.outdoor_temperature) want.add('measure_temperature.outdoor');
-      if (this.outdoor.roles.power) want.add('measure_power');
-      if (this.outdoor.roles.energy) want.add('meter_power');
-    }
+    const out = this.outdoor ? this.outdoor.roles : {};
     this.traits = climateTraits(roles.climate);
-    if (this.traits.fans.length) want.add('samsung_fan_speed');
-    if (this.traits.swings.length > 1) want.add('samsung_swing');
-    if (this.traits.presets.length > 1) want.add('samsung_preset');
+    const want = new Set();
+    const wantIf = (cond, cap) => cond && want.add(cap);
+    wantIf(roles.room_humidity, 'measure_humidity');
+    wantIf(out.outdoor_temperature, 'measure_temperature.outdoor');
+    wantIf(out.power, 'measure_power');
+    wantIf(out.energy, 'meter_power');
+    wantIf(out.error_code, 'alarm_generic');
+    wantIf(out.error_code, 'samsung_error_code');
+    wantIf(this.traits.fans.length, 'samsung_fan_speed');
+    wantIf(this.traits.swings.length > 1, 'samsung_swing');
+    wantIf(this.traits.presets.length > 1, 'samsung_preset');
+    wantIf(roles.filter_usage, 'samsung_filter_usage');
+    wantIf(roles.filter_alarm, 'alarm_generic.filter');
+    wantIf(roles.filter_reset, 'button.filter_reset');
+    wantIf(roles.auto_clean, 'onoff.auto_clean');
+    wantIf(roles.eva_in, 'measure_temperature.eva_in');
+    wantIf(roles.eva_out, 'measure_temperature.eva_out');
+    wantIf(this.bridgeRoles.restart, 'button.restart');
 
-    const optional = ['measure_humidity', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset', ...ENERGY_CAPS];
-    for (const cap of optional) {
+    for (const cap of OPTIONAL) {
       if (want.has(cap) && !this.hasCapability(cap)) await this.addCapability(cap).catch(this.error);
       if (!want.has(cap) && this.hasCapability(cap)) await this.removeCapability(cap).catch(this.error);
     }
+    await this.orderPickers();
+
     const { min, max, step } = this.traits;
     const opts = this.getCapabilityOptions('target_temperature') || {};
     if (opts.min !== min || opts.max !== max || opts.step !== step) {
@@ -87,52 +109,73 @@ class IndoorUnitDevice extends Homey.Device {
     }
   }
 
+  /** Homey keeps capabilities in the order they were added; re-add pickers when that order is off. */
+  async orderPickers() {
+    const present = this.getCapabilities().filter((c) => PICKERS.includes(c));
+    const wanted = PICKERS.filter((c) => present.includes(c));
+    if (present.join() === wanted.join()) return;
+    for (const cap of present) await this.removeCapability(cap).catch(this.error);
+    for (const cap of wanted) await this.addCapability(cap).catch(this.error);
+  }
+
   async onState(key, value) {
     const role = this.roleByKey.get(key);
     if (!role) return;
     switch (role) {
-      case 'climate': {
-        const c = climateToHomey(value);
-        await this.update('onoff', c.on);
-        // While off, show the mode the AC returns to when switched on.
-        if (!c.mode) await this.update('samsung_hvac_mode', this.lastMode);
-        if (c.mode) {
-          await this.update('samsung_hvac_mode', c.mode);
-          if (c.mode !== this.lastMode) {
-            this.lastMode = c.mode;
-            this.setStoreValue('lastMode', c.mode).catch(this.error);
-          }
-        }
-        if (c.target !== null) await this.update('target_temperature', c.target);
-        if (c.current !== null) await this.update('measure_temperature', c.current);
-        if (c.fan) await this.update('samsung_fan_speed', c.fan);
-        if (c.swing) await this.update('samsung_swing', c.swing);
-        if (c.preset) await this.update('samsung_preset', c.preset);
-        break;
-      }
+      case 'climate': await this.onClimate(value); break;
       case 'room_temperature':
         // The climate entity carries the same value; use the sensor only as a fallback.
         if (this.getCapabilityValue('measure_temperature') === null && value !== null) await this.update('measure_temperature', value);
         break;
-      case 'room_humidity':
-        await this.update('measure_humidity', value);
-        break;
-      case 'outdoor_temperature':
-        await this.update('measure_temperature.outdoor', value);
-        break;
-      case 'power':
-        await this.update('measure_power', value);
-        break;
+      case 'room_humidity': await this.update('measure_humidity', value); break;
+      case 'outdoor_temperature': await this.update('measure_temperature.outdoor', value); break;
+      case 'power': await this.update('measure_power', value); break;
       case 'energy':
         // Cumulative counter of the AC itself; never write 0/null over a real reading.
         if (value) await this.update('meter_power', value);
         break;
+      case 'error_code':
+        if (value === null) break;
+        await this.update('samsung_error_code', value);
+        await this.update('alarm_generic', value > 0);
+        break;
+      case 'filter_usage': await this.update('samsung_filter_usage', value); break;
+      case 'filter_alarm': if (value !== null) await this.update('alarm_generic.filter', value); break;
+      case 'auto_clean': await this.update('onoff.auto_clean', value); break;
+      case 'eva_in': await this.update('measure_temperature.eva_in', value); break;
+      case 'eva_out': await this.update('measure_temperature.eva_out', value); break;
       case 'bus_active':
         if (value === false) await this.setWarning(this.homey.__('device.standby')).catch(this.error);
         else await this.unsetWarning().catch(this.error);
         break;
       default:
     }
+  }
+
+  async onClimate(value) {
+    const c = climateToHomey(value);
+    const wasMode = this.getCapabilityValue('samsung_hvac_mode');
+    const wasPreset = this.getCapabilityValue('samsung_preset');
+    await this.update('onoff', c.on);
+    // While off, show the mode the AC returns to when switched on.
+    await this.update('samsung_hvac_mode', c.mode || this.lastMode);
+    if (c.mode && c.mode !== this.lastMode) {
+      this.lastMode = c.mode;
+      this.setStoreValue('lastMode', c.mode).catch(this.error);
+    }
+    if (c.target !== null) await this.update('target_temperature', c.target);
+    if (c.current !== null) await this.update('measure_temperature', c.current);
+    if (c.fan) await this.update('samsung_fan_speed', c.fan);
+    if (c.swing) await this.update('samsung_swing', c.swing);
+    if (c.preset) await this.update('samsung_preset', c.preset);
+    // Flow triggers: only real changes of a running AC, not the replay at startup.
+    if (this.ready && c.mode && wasMode !== null && c.mode !== wasMode) {
+      this.driver.triggerModeChanged(this, c.mode);
+    }
+    if (this.ready && c.preset && wasPreset !== null && c.preset !== wasPreset) {
+      this.driver.triggerPresetChanged(this, c.preset);
+    }
+    this.ready = true;
   }
 
   async update(cap, value) {
@@ -167,8 +210,30 @@ class IndoorUnitDevice extends Homey.Device {
       const effective = mode || (this.getCapabilityValue('onoff') ? this.getCapabilityValue('samsung_hvac_mode') : null);
       if (!WINDFREE_MODES.includes(effective)) throw new Error(this.homey.__('device.windfree_mode'));
     }
+    this.guard(() => this.bridge.climateCommand(entity, fields));
+  }
+
+  async sendSwitch(role, value) {
+    const entity = this.unit && this.unit.roles[role];
+    if (!entity) throw new Error(this.homey.__('device.offline'));
+    this.guard(() => this.bridge.switchCommand(entity, value));
+  }
+
+  async resetFilter() {
+    const entity = this.unit && this.unit.roles.filter_reset;
+    if (!entity) throw new Error(this.homey.__('device.not_supported'));
+    this.guard(() => this.bridge.press(entity));
+  }
+
+  async restartBridge() {
+    const entity = this.bridgeRoles && this.bridgeRoles.restart;
+    if (!entity) throw new Error(this.homey.__('device.not_supported'));
+    this.guard(() => this.bridge.press(entity));
+  }
+
+  guard(fn) {
     try {
-      this.bridge.climateCommand(entity, fields);
+      fn();
     } catch (err) {
       throw new Error(this.homey.__('device.offline'));
     }

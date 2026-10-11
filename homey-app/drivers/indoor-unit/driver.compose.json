@@ -9,14 +9,23 @@
     "onoff",
     "target_temperature",
     "measure_temperature",
-    "samsung_hvac_mode",
-    "samsung_fan_speed",
-    "samsung_swing",
-    "samsung_preset",
     "measure_humidity",
     "measure_temperature.outdoor",
     "measure_power",
-    "meter_power"
+    "meter_power",
+    "samsung_fan_speed",
+    "samsung_swing",
+    "samsung_preset",
+    "samsung_hvac_mode",
+    "onoff.auto_clean",
+    "samsung_filter_usage",
+    "alarm_generic.filter",
+    "button.filter_reset",
+    "alarm_generic",
+    "samsung_error_code",
+    "measure_temperature.eva_in",
+    "measure_temperature.eva_out",
+    "button.restart"
   ],
   "capabilitiesOptions": {
     "target_temperature": {
@@ -52,6 +61,60 @@
         "nl": "Energie (buitenunit)",
         "fr": "Énergie (unité extérieure)"
       }
+    },
+    "onoff.auto_clean": {
+      "title": {
+        "en": "Auto clean",
+        "nl": "Automatische reiniging",
+        "fr": "Nettoyage automatique"
+      },
+      "uiQuickAction": false
+    },
+    "alarm_generic.filter": {
+      "title": {
+        "en": "Clean the filter",
+        "nl": "Filter reinigen",
+        "fr": "Nettoyer le filtre"
+      }
+    },
+    "button.filter_reset": {
+      "title": {
+        "en": "Reset filter counter",
+        "nl": "Filterteller resetten",
+        "fr": "Réinitialiser le compteur du filtre"
+      },
+      "maintenanceAction": true
+    },
+    "alarm_generic": {
+      "title": {
+        "en": "Fault",
+        "nl": "Storing",
+        "fr": "Panne"
+      }
+    },
+    "measure_temperature.eva_in": {
+      "title": {
+        "en": "Evaporator in",
+        "nl": "Verdamper in",
+        "fr": "Évaporateur entrée"
+      },
+      "insights": false
+    },
+    "measure_temperature.eva_out": {
+      "title": {
+        "en": "Evaporator out",
+        "nl": "Verdamper uit",
+        "fr": "Évaporateur sortie"
+      },
+      "insights": false
+    },
+    "button.restart": {
+      "title": {
+        "en": "Restart bridge",
+        "nl": "Bridge herstarten",
+        "fr": "Redémarrer le pont"
+      },
+      "maintenanceAction": true
     }
   },
   "platforms": [

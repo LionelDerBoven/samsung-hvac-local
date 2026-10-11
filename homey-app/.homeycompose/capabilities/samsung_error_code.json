@@ -1,0 +1,14 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Error code",
+    "nl": "Foutcode",
+    "fr": "Code d'erreur"
+  },
+  "decimals": 0,
+  "getable": true,
+  "setable": false,
+  "uiComponent": "sensor",
+  "insights": false,
+  "icon": "/assets/capabilities/error.svg"
+}

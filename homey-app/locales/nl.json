@@ -29,5 +29,23 @@
     "standby": "De airco staat in diepe stand-by: de waarden worden bijgewerkt zodra hij ontwaakt.",
     "not_supported": "Je airco ondersteunt deze instelling niet.",
     "windfree_mode": "WindFree werkt enkel in de modus Koelen of Drogen."
+  },
+  "flow": {
+    "mode": {
+      "cool": "Koelen",
+      "heat": "Verwarmen",
+      "dry": "Drogen",
+      "fan": "Ventileren",
+      "auto": "Auto"
+    },
+    "preset": {
+      "none": "Geen",
+      "windfree": "WindFree",
+      "quiet": "Stil",
+      "fast": "Snel",
+      "eco": "Eco",
+      "sleep": "Slapen",
+      "longreach": "Lange reikwijdte"
+    }
   }
 }

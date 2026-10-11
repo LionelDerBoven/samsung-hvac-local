@@ -29,5 +29,23 @@
     "standby": "The air conditioner is in deep standby: values update once it wakes up.",
     "not_supported": "This setting is not supported by your air conditioner.",
     "windfree_mode": "WindFree only works in Cool or Dry mode."
+  },
+  "flow": {
+    "mode": {
+      "cool": "Cool",
+      "heat": "Heat",
+      "dry": "Dry",
+      "fan": "Fan",
+      "auto": "Auto"
+    },
+    "preset": {
+      "none": "None",
+      "windfree": "WindFree",
+      "quiet": "Quiet",
+      "fast": "Fast",
+      "eco": "Eco",
+      "sleep": "Sleep",
+      "longreach": "Long reach"
+    }
   }
 }

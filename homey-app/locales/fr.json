@@ -29,5 +29,23 @@
     "standby": "Le climatiseur est en veille profonde : les valeurs seront mises à jour à son réveil.",
     "not_supported": "Votre climatiseur ne prend pas en charge ce réglage.",
     "windfree_mode": "WindFree ne fonctionne qu'en mode Refroidir ou Déshumidifier."
+  },
+  "flow": {
+    "mode": {
+      "cool": "Refroidir",
+      "heat": "Chauffer",
+      "dry": "Déshumidifier",
+      "fan": "Ventiler",
+      "auto": "Auto"
+    },
+    "preset": {
+      "none": "Aucun",
+      "windfree": "WindFree",
+      "quiet": "Silencieux",
+      "fast": "Rapide",
+      "eco": "Éco",
+      "sleep": "Sommeil",
+      "longreach": "Longue portée"
+    }
   }
 }

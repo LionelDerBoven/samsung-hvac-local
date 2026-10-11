@@ -8,6 +8,34 @@ const normaliseMac = (mac) => String(mac || '').replace(/[^0-9a-f]/gi, '').toLow
 
 class IndoorUnitDriver extends Homey.Driver {
 
+  async onInit() {
+    const { flow } = this.homey;
+    this.modeChanged = flow.getDeviceTriggerCard('mode_changed');
+    this.presetChanged = flow.getDeviceTriggerCard('preset_changed');
+
+    // Actions run the device's own capability listeners, so Flows behave like the device view.
+    const setter = (card, cap, arg) => flow.getActionCard(card)
+      .registerRunListener((args) => args.device.triggerCapabilityListener(cap, args[arg]));
+    setter('set_mode', 'samsung_hvac_mode', 'mode');
+    setter('set_fan_speed', 'samsung_fan_speed', 'fan');
+    setter('set_swing', 'samsung_swing', 'swing');
+    setter('set_preset', 'samsung_preset', 'preset');
+    flow.getActionCard('reset_filter').registerRunListener(({ device }) => device.resetFilter());
+
+    flow.getConditionCard('mode_is').registerRunListener(({ device, mode }) => (
+      device.getCapabilityValue('onoff') === true && device.getCapabilityValue('samsung_hvac_mode') === mode));
+    flow.getConditionCard('preset_is').registerRunListener(({ device, preset }) => (
+      device.getCapabilityValue('samsung_preset') === preset));
+  }
+
+  triggerModeChanged(device, mode) {
+    this.modeChanged.trigger(device, { mode: this.homey.__(`flow.mode.${mode}`) }).catch(this.error);
+  }
+
+  triggerPresetChanged(device, preset) {
+    this.presetChanged.trigger(device, { preset: this.homey.__(`flow.preset.${preset}`) }).catch(this.error);
+  }
+
   /**
    * Pairing: pick a bridge found on the network or enter its address (select / manual), enter the
    * API encryption key (key), then choose the indoor units (list_devices).
