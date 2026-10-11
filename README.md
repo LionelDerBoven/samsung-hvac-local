@@ -20,7 +20,10 @@ encrypted ESPHome API. The Samsung app (SmartThings) keeps working next to it.
 
 1. **Hardware**: an ESP32 with an RS485 transceiver, e.g. M5Stack ATOM Lite + ATOMIC RS485 Base.
    - Connect **F1 → A** and **F2 → B** on the indoor unit's terminal block.
-   - Power the board from 6/12–24 V DC.
+   - Power, one of:
+     - **USB-C** on the ATOM (5 V), from any USB power supply. The simplest option; no soldering.
+     - **6/12–24 V DC** on the RS485 base, e.g. tapped from the indoor unit, so no separate adapter is needed.
+   - Use one power source at a time, not both.
    - ⚠️ The terminal block also carries mains voltage (L/N). Switch off the breaker before working on it.
 2. **Firmware**: copy [`esphome/example.yaml`](esphome/example.yaml) and
    [`esphome/secrets.yaml.example`](esphome/secrets.yaml.example). Set the unit addresses and names,
