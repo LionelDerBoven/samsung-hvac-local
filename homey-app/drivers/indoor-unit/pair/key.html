@@ -1,0 +1,40 @@
+<style>
+  .hv-error { color: var(--homey-color-danger, #e00); margin: 12px 0; }
+  .hv-hint { opacity: .7; font-size: .9em; margin: 6px 0 16px; }
+</style>
+
+<p class="homey-subtitle" data-i18n="pair.key_intro"></p>
+<form id="form" class="homey-form">
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="key" data-i18n="pair.key_label"></label>
+    <input class="homey-form-input" id="key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+    <p class="hv-hint" data-i18n="pair.key_hint"></p>
+  </div>
+  <p id="error" class="hv-error" hidden></p>
+  <button type="submit" class="homey-button-primary-full" data-i18n="pair.connect"></button>
+</form>
+
+<script type="application/javascript">
+  (function () {
+    var error = document.getElementById('error');
+    var busy = false;
+    document.getElementById('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+      busy = true;
+      error.hidden = true;
+      Homey.showLoadingOverlay();
+      Homey.emit('connect', { key: document.getElementById('key').value })
+        .then(function () {
+          Homey.hideLoadingOverlay();
+          Homey.showView('list_devices');
+        })
+        .catch(function (err) {
+          Homey.hideLoadingOverlay();
+          error.textContent = err && err.message ? err.message : String(err);
+          error.hidden = false;
+        })
+        .then(function () { busy = false; });
+    });
+  }());
+</script>

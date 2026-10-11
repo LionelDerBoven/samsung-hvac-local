@@ -1,0 +1,32 @@
+<style>
+  .hv-error { color: var(--homey-color-danger, #e00); margin: 12px 0; }
+</style>
+
+<p class="homey-subtitle" data-i18n="pair.manual_intro"></p>
+<form id="form" class="homey-form">
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="host" data-i18n="pair.host_label"></label>
+    <input class="homey-form-input" id="host" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+  </div>
+  <p id="error" class="hv-error" hidden></p>
+  <button type="submit" class="homey-button-primary-full" data-i18n="pair.next"></button>
+</form>
+
+<script type="application/javascript">
+  (function () {
+    var error = document.getElementById('error');
+    document.getElementById('host').placeholder = Homey.__('pair.host_placeholder');
+    document.getElementById('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      error.hidden = true;
+      var value = document.getElementById('host').value.trim();
+      var parts = value.split(':');
+      Homey.emit('set_host', { host: parts[0], port: parts[1] })
+        .then(function () { Homey.showView('key'); })
+        .catch(function (err) {
+          error.textContent = err && err.message ? err.message : String(err);
+          error.hidden = false;
+        });
+    });
+  }());
+</script>

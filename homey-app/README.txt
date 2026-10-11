@@ -1,0 +1,2 @@
+Control your Samsung air conditioner from Homey without the cloud. A small ESPHome bridge on the indoor unit's F1/F2 bus talks to the air conditioner directly, and this app gives you one complete Homey device per indoor unit: power, mode, temperature, fan speed, air direction, WindFree and the other special modes, plus room and outdoor temperature, humidity, and the energy use of the outdoor unit in Homey Energy.
+Unofficial community project, not affiliated with Samsung. You need a bridge built with the Samsung HVAC Local ESPHome packages.

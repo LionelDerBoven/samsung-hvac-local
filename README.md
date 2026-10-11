@@ -13,7 +13,7 @@ encrypted ESPHome API. The Samsung app (SmartThings) keeps working next to it.
 | Part | What it does |
 |------|--------------|
 | `esphome/`: bridge packages | Climate control: power, all modes, target temperature, fan incl. Turbo, swing, WindFree/Quiet/Fast/LongReach/Eco/Sleep. Room, outdoor and evaporator temperatures, humidity, outdoor power and cumulative energy, filter usage and reset, error code. Optional offline web UI with a live log. |
-| `homey-app/`: Homey app *(in development)* | One Homey device per indoor unit with all of the above, energy in Homey Energy, flow cards. |
+| `homey-app/`: Homey app *(beta)* | One Homey device per indoor unit with all of the above, energy in Homey Energy, flow cards. |
 | [`CONTRACT.md`](CONTRACT.md) | The fixed bridge ↔ client agreement (entity names, grouping, versions). |
 
 ## Usage

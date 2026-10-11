@@ -1,0 +1,376 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.samsunghvaclocal.community",
+  "version": "0.1.0",
+  "compatibility": ">=12.4.0",
+  "sdk": 3,
+  "runtime": "nodejs",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Samsung HVAC Local",
+    "nl": "Samsung HVAC Local",
+    "fr": "Samsung HVAC Local"
+  },
+  "description": {
+    "en": "Your air conditioner, straight from your own network",
+    "nl": "Je airco, rechtstreeks vanuit je eigen netwerk",
+    "fr": "Votre climatiseur, directement depuis votre propre réseau"
+  },
+  "brandColor": "#0B63C5",
+  "category": [
+    "climate"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "assets/images/small.jpg",
+    "large": "assets/images/large.jpg",
+    "xlarge": "assets/images/xlarge.jpg"
+  },
+  "author": {
+    "name": "LDB Technology",
+    "email": "homey@ldbtechnology.be"
+  },
+  "support": "mailto:support@ldbtechnology.be",
+  "source": "https://github.com/LionelDerBoven/samsung-hvac-local",
+  "bugs": {
+    "url": "https://github.com/LionelDerBoven/samsung-hvac-local/issues"
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Indoor unit",
+        "nl": "Binnenunit",
+        "fr": "Unité intérieure"
+      },
+      "class": "airconditioning",
+      "capabilities": [
+        "onoff",
+        "target_temperature",
+        "measure_temperature",
+        "samsung_hvac_mode",
+        "samsung_fan_speed",
+        "samsung_swing",
+        "samsung_preset",
+        "measure_humidity",
+        "measure_temperature.outdoor",
+        "measure_power",
+        "meter_power"
+      ],
+      "capabilitiesOptions": {
+        "target_temperature": {
+          "min": 16,
+          "max": 30,
+          "step": 1,
+          "decimals": 0
+        },
+        "measure_temperature": {
+          "title": {
+            "en": "Room temperature",
+            "nl": "Kamertemperatuur",
+            "fr": "Température ambiante"
+          }
+        },
+        "measure_temperature.outdoor": {
+          "title": {
+            "en": "Outdoor temperature",
+            "nl": "Buitentemperatuur",
+            "fr": "Température extérieure"
+          }
+        },
+        "measure_power": {
+          "title": {
+            "en": "Power (outdoor unit)",
+            "nl": "Vermogen (buitenunit)",
+            "fr": "Puissance (unité extérieure)"
+          }
+        },
+        "meter_power": {
+          "title": {
+            "en": "Energy (outdoor unit)",
+            "nl": "Energie (buitenunit)",
+            "fr": "Énergie (unité extérieure)"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/indoor-unit/assets/images/small.png",
+        "large": "/drivers/indoor-unit/assets/images/large.png",
+        "xlarge": "/drivers/indoor-unit/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "select"
+        },
+        {
+          "id": "manual",
+          "navigation": {
+            "prev": "select"
+          }
+        },
+        {
+          "id": "key",
+          "navigation": {
+            "prev": "select"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "prev": "key",
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "indoor-unit"
+    }
+  ],
+  "capabilities": {
+    "samsung_fan_speed": {
+      "type": "enum",
+      "title": {
+        "en": "Fan speed",
+        "nl": "Ventilatorsnelheid",
+        "fr": "Vitesse du ventilateur"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/fan.svg",
+      "values": [
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Auto",
+            "fr": "Auto"
+          }
+        },
+        {
+          "id": "low",
+          "title": {
+            "en": "Low",
+            "nl": "Laag",
+            "fr": "Basse"
+          }
+        },
+        {
+          "id": "medium",
+          "title": {
+            "en": "Medium",
+            "nl": "Midden",
+            "fr": "Moyenne"
+          }
+        },
+        {
+          "id": "high",
+          "title": {
+            "en": "High",
+            "nl": "Hoog",
+            "fr": "Haute"
+          }
+        },
+        {
+          "id": "turbo",
+          "title": {
+            "en": "Turbo",
+            "nl": "Turbo",
+            "fr": "Turbo"
+          }
+        }
+      ]
+    },
+    "samsung_hvac_mode": {
+      "type": "enum",
+      "title": {
+        "en": "Mode",
+        "nl": "Modus",
+        "fr": "Mode"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/mode.svg",
+      "values": [
+        {
+          "id": "cool",
+          "title": {
+            "en": "Cool",
+            "nl": "Koelen",
+            "fr": "Refroidir"
+          }
+        },
+        {
+          "id": "heat",
+          "title": {
+            "en": "Heat",
+            "nl": "Verwarmen",
+            "fr": "Chauffer"
+          }
+        },
+        {
+          "id": "dry",
+          "title": {
+            "en": "Dry",
+            "nl": "Drogen",
+            "fr": "Déshumidifier"
+          }
+        },
+        {
+          "id": "fan",
+          "title": {
+            "en": "Fan",
+            "nl": "Ventileren",
+            "fr": "Ventiler"
+          }
+        },
+        {
+          "id": "auto",
+          "title": {
+            "en": "Auto",
+            "nl": "Auto",
+            "fr": "Auto"
+          }
+        }
+      ]
+    },
+    "samsung_preset": {
+      "type": "enum",
+      "title": {
+        "en": "Special mode",
+        "nl": "Speciale modus",
+        "fr": "Mode spécial"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/preset.svg",
+      "values": [
+        {
+          "id": "none",
+          "title": {
+            "en": "None",
+            "nl": "Geen",
+            "fr": "Aucun"
+          }
+        },
+        {
+          "id": "windfree",
+          "title": {
+            "en": "WindFree",
+            "nl": "WindFree",
+            "fr": "WindFree"
+          }
+        },
+        {
+          "id": "quiet",
+          "title": {
+            "en": "Quiet",
+            "nl": "Stil",
+            "fr": "Silencieux"
+          }
+        },
+        {
+          "id": "fast",
+          "title": {
+            "en": "Fast",
+            "nl": "Snel",
+            "fr": "Rapide"
+          }
+        },
+        {
+          "id": "eco",
+          "title": {
+            "en": "Eco",
+            "nl": "Eco",
+            "fr": "Éco"
+          }
+        },
+        {
+          "id": "sleep",
+          "title": {
+            "en": "Sleep",
+            "nl": "Slapen",
+            "fr": "Sommeil"
+          }
+        },
+        {
+          "id": "longreach",
+          "title": {
+            "en": "Long reach",
+            "nl": "Lange reikwijdte",
+            "fr": "Longue portée"
+          }
+        }
+      ]
+    },
+    "samsung_swing": {
+      "type": "enum",
+      "title": {
+        "en": "Air direction",
+        "nl": "Windrichting",
+        "fr": "Direction de l'air"
+      },
+      "getable": true,
+      "setable": true,
+      "uiComponent": "picker",
+      "icon": "/assets/capabilities/swing.svg",
+      "values": [
+        {
+          "id": "off",
+          "title": {
+            "en": "Fixed",
+            "nl": "Vast",
+            "fr": "Fixe"
+          }
+        },
+        {
+          "id": "vertical",
+          "title": {
+            "en": "Vertical swing",
+            "nl": "Verticaal zwaaien",
+            "fr": "Oscillation verticale"
+          }
+        },
+        {
+          "id": "horizontal",
+          "title": {
+            "en": "Horizontal swing",
+            "nl": "Horizontaal zwaaien",
+            "fr": "Oscillation horizontale"
+          }
+        },
+        {
+          "id": "both",
+          "title": {
+            "en": "Both directions",
+            "nl": "Beide richtingen",
+            "fr": "Les deux directions"
+          }
+        }
+      ]
+    }
+  },
+  "discovery": {
+    "esphome": {
+      "type": "mdns-sd",
+      "mdns-sd": {
+        "name": "esphomelib",
+        "protocol": "tcp"
+      },
+      "id": "{{txt.mac}}"
+    }
+  }
+}

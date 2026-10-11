@@ -1,0 +1,70 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Special mode",
+    "nl": "Speciale modus",
+    "fr": "Mode spécial"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/preset.svg",
+  "values": [
+    {
+      "id": "none",
+      "title": {
+        "en": "None",
+        "nl": "Geen",
+        "fr": "Aucun"
+      }
+    },
+    {
+      "id": "windfree",
+      "title": {
+        "en": "WindFree",
+        "nl": "WindFree",
+        "fr": "WindFree"
+      }
+    },
+    {
+      "id": "quiet",
+      "title": {
+        "en": "Quiet",
+        "nl": "Stil",
+        "fr": "Silencieux"
+      }
+    },
+    {
+      "id": "fast",
+      "title": {
+        "en": "Fast",
+        "nl": "Snel",
+        "fr": "Rapide"
+      }
+    },
+    {
+      "id": "eco",
+      "title": {
+        "en": "Eco",
+        "nl": "Eco",
+        "fr": "Éco"
+      }
+    },
+    {
+      "id": "sleep",
+      "title": {
+        "en": "Sleep",
+        "nl": "Slapen",
+        "fr": "Sommeil"
+      }
+    },
+    {
+      "id": "longreach",
+      "title": {
+        "en": "Long reach",
+        "nl": "Lange reikwijdte",
+        "fr": "Longue portée"
+      }
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Fan speed",
+    "nl": "Ventilatorsnelheid",
+    "fr": "Vitesse du ventilateur"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/fan.svg",
+  "values": [
+    {
+      "id": "auto",
+      "title": {
+        "en": "Auto",
+        "nl": "Auto",
+        "fr": "Auto"
+      }
+    },
+    {
+      "id": "low",
+      "title": {
+        "en": "Low",
+        "nl": "Laag",
+        "fr": "Basse"
+      }
+    },
+    {
+      "id": "medium",
+      "title": {
+        "en": "Medium",
+        "nl": "Midden",
+        "fr": "Moyenne"
+      }
+    },
+    {
+      "id": "high",
+      "title": {
+        "en": "High",
+        "nl": "Hoog",
+        "fr": "Haute"
+      }
+    },
+    {
+      "id": "turbo",
+      "title": {
+        "en": "Turbo",
+        "nl": "Turbo",
+        "fr": "Turbo"
+      }
+    }
+  ]
+}

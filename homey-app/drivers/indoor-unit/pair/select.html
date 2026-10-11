@@ -1,0 +1,54 @@
+<style>
+  .hv-tile { display: block; width: 100%; margin: 0 0 10px; padding: 14px 16px; text-align: left; }
+  .hv-tile small { display: block; opacity: .7; font-weight: normal; }
+  .hv-error { color: var(--homey-color-danger, #e00); margin: 12px 0; }
+</style>
+
+<p class="homey-subtitle" data-i18n="pair.select_intro"></p>
+<div id="list"></div>
+<p id="error" class="hv-error" hidden></p>
+<button id="manual" type="button" class="homey-button-secondary-shadow-full" data-i18n="pair.manual_button"></button>
+
+<script type="application/javascript">
+  (function () {
+    var list = document.getElementById('list');
+    var error = document.getElementById('error');
+
+    function choose(item) {
+      error.hidden = true;
+      Homey.emit('set_host', { host: item.host, port: item.port })
+        .then(function () { Homey.showView('key'); })
+        .catch(function (err) {
+          error.textContent = err && err.message ? err.message : String(err);
+          error.hidden = false;
+        });
+    }
+
+    document.getElementById('manual').addEventListener('click', function () {
+      Homey.showView('manual');
+    });
+
+    Homey.showLoadingOverlay();
+    Homey.emit('discover')
+      .then(function (found) {
+        Homey.hideLoadingOverlay();
+        if (!found.length) return Homey.showView('manual');
+        found.forEach(function (item) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'homey-button-primary-full hv-tile';
+          b.textContent = item.name;
+          var detail = document.createElement('small');
+          detail.textContent = item.host;
+          b.appendChild(detail);
+          b.addEventListener('click', function () { choose(item); });
+          list.appendChild(b);
+        });
+        return null;
+      })
+      .catch(function () {
+        Homey.hideLoadingOverlay();
+        Homey.showView('manual');
+      });
+  }());
+</script>

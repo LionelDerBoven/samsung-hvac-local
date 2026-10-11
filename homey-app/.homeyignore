@@ -1,0 +1,11 @@
+# Kept out of the package that gets installed on the Homey.
+/README.md
+/test/
+/tools/
+/package-lock.json
+/.eslintrc.json
+/.homeyreview.md
+/env.json
+/node_modules/
+/.homeybuild/
+/tsconfig.json

@@ -1,0 +1,46 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Air direction",
+    "nl": "Windrichting",
+    "fr": "Direction de l'air"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/swing.svg",
+  "values": [
+    {
+      "id": "off",
+      "title": {
+        "en": "Fixed",
+        "nl": "Vast",
+        "fr": "Fixe"
+      }
+    },
+    {
+      "id": "vertical",
+      "title": {
+        "en": "Vertical swing",
+        "nl": "Verticaal zwaaien",
+        "fr": "Oscillation verticale"
+      }
+    },
+    {
+      "id": "horizontal",
+      "title": {
+        "en": "Horizontal swing",
+        "nl": "Horizontaal zwaaien",
+        "fr": "Oscillation horizontale"
+      }
+    },
+    {
+      "id": "both",
+      "title": {
+        "en": "Both directions",
+        "nl": "Beide richtingen",
+        "fr": "Les deux directions"
+      }
+    }
+  ]
+}

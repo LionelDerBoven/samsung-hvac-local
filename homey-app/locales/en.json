@@ -1,0 +1,33 @@
+{
+  "pair": {
+    "select_intro": "Choose your Samsung HVAC Local bridge.",
+    "manual_button": "Enter an address",
+    "manual_intro": "Enter the IP address or host name of the bridge.",
+    "host_label": "Address",
+    "host_placeholder": "IP address",
+    "next": "Next",
+    "key_intro": "Enter the API encryption key of the bridge.",
+    "key_label": "Encryption key",
+    "key_hint": "The api_encryption_key from your ESPHome secrets (44 characters, ends with =).",
+    "connect": "Connect",
+    "errors": {
+      "no_host": "Enter the address of the bridge.",
+      "timeout": "The bridge does not answer. Check the address and that it is online.",
+      "refused": "The bridge refused the connection. Is the ESPHome API enabled on port 6053?",
+      "bad_key": "The encryption key is not correct.",
+      "no_encryption": "This bridge has no API encryption. Set an api_encryption_key in its configuration.",
+      "not_bridge": "This ESPHome device is not a Samsung HVAC Local bridge.",
+      "no_units": "The bridge reports no indoor unit. Check its configuration.",
+      "generic": "Could not connect to the bridge: __message__"
+    }
+  },
+  "device": {
+    "connecting": "Connecting to the bridge…",
+    "offline": "The bridge is not reachable.",
+    "bad_key": "The encryption key is no longer accepted. Repair the device.",
+    "unit_missing": "This indoor unit is no longer in the bridge configuration.",
+    "standby": "The air conditioner is in deep standby: values update once it wakes up.",
+    "not_supported": "This setting is not supported by your air conditioner.",
+    "windfree_mode": "WindFree only works in Cool or Dry mode."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "pair": {
+    "select_intro": "Kies je Samsung HVAC Local-bridge.",
+    "manual_button": "Adres ingeven",
+    "manual_intro": "Geef het IP-adres of de hostnaam van de bridge in.",
+    "host_label": "Adres",
+    "host_placeholder": "IP-adres",
+    "next": "Volgende",
+    "key_intro": "Geef de API-encryptiesleutel van de bridge in.",
+    "key_label": "Encryptiesleutel",
+    "key_hint": "De api_encryption_key uit je ESPHome-secrets (44 tekens, eindigt op =).",
+    "connect": "Verbinden",
+    "errors": {
+      "no_host": "Geef het adres van de bridge in.",
+      "timeout": "De bridge antwoordt niet. Controleer het adres en of hij online is.",
+      "refused": "De bridge weigert de verbinding. Staat de ESPHome-API aan op poort 6053?",
+      "bad_key": "De encryptiesleutel klopt niet.",
+      "no_encryption": "Deze bridge heeft geen API-encryptie. Stel een api_encryption_key in zijn configuratie in.",
+      "not_bridge": "Dit ESPHome-apparaat is geen Samsung HVAC Local-bridge.",
+      "no_units": "De bridge meldt geen binnenunit. Controleer zijn configuratie.",
+      "generic": "Kan niet verbinden met de bridge: __message__"
+    }
+  },
+  "device": {
+    "connecting": "Verbinden met de bridge…",
+    "offline": "De bridge is niet bereikbaar.",
+    "bad_key": "De encryptiesleutel wordt niet meer aanvaard. Herstel het apparaat.",
+    "unit_missing": "Deze binnenunit staat niet meer in de configuratie van de bridge.",
+    "standby": "De airco staat in diepe stand-by: de waarden worden bijgewerkt zodra hij ontwaakt.",
+    "not_supported": "Je airco ondersteunt deze instelling niet.",
+    "windfree_mode": "WindFree werkt enkel in de modus Koelen of Drogen."
+  }
+}

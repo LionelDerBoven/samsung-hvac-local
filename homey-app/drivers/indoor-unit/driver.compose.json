@@ -1,0 +1,97 @@
+{
+  "name": {
+    "en": "Indoor unit",
+    "nl": "Binnenunit",
+    "fr": "Unité intérieure"
+  },
+  "class": "airconditioning",
+  "capabilities": [
+    "onoff",
+    "target_temperature",
+    "measure_temperature",
+    "samsung_hvac_mode",
+    "samsung_fan_speed",
+    "samsung_swing",
+    "samsung_preset",
+    "measure_humidity",
+    "measure_temperature.outdoor",
+    "measure_power",
+    "meter_power"
+  ],
+  "capabilitiesOptions": {
+    "target_temperature": {
+      "min": 16,
+      "max": 30,
+      "step": 1,
+      "decimals": 0
+    },
+    "measure_temperature": {
+      "title": {
+        "en": "Room temperature",
+        "nl": "Kamertemperatuur",
+        "fr": "Température ambiante"
+      }
+    },
+    "measure_temperature.outdoor": {
+      "title": {
+        "en": "Outdoor temperature",
+        "nl": "Buitentemperatuur",
+        "fr": "Température extérieure"
+      }
+    },
+    "measure_power": {
+      "title": {
+        "en": "Power (outdoor unit)",
+        "nl": "Vermogen (buitenunit)",
+        "fr": "Puissance (unité extérieure)"
+      }
+    },
+    "meter_power": {
+      "title": {
+        "en": "Energy (outdoor unit)",
+        "nl": "Energie (buitenunit)",
+        "fr": "Énergie (unité extérieure)"
+      }
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.png",
+    "large": "{{driverAssetsPath}}/images/large.png",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.png"
+  },
+  "pair": [
+    {
+      "id": "select"
+    },
+    {
+      "id": "manual",
+      "navigation": {
+        "prev": "select"
+      }
+    },
+    {
+      "id": "key",
+      "navigation": {
+        "prev": "select"
+      }
+    },
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": {
+        "prev": "key",
+        "next": "add_devices"
+      }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "pair": {
+    "select_intro": "Choisissez votre pont Samsung HVAC Local.",
+    "manual_button": "Saisir une adresse",
+    "manual_intro": "Saisissez l'adresse IP ou le nom d'hôte du pont.",
+    "host_label": "Adresse",
+    "host_placeholder": "Adresse IP",
+    "next": "Suivant",
+    "key_intro": "Saisissez la clé de chiffrement de l'API du pont.",
+    "key_label": "Clé de chiffrement",
+    "key_hint": "L'api_encryption_key de vos secrets ESPHome (44 caractères, se termine par =).",
+    "connect": "Se connecter",
+    "errors": {
+      "no_host": "Saisissez l'adresse du pont.",
+      "timeout": "Le pont ne répond pas. Vérifiez l'adresse et qu'il est en ligne.",
+      "refused": "Le pont refuse la connexion. L'API ESPHome est-elle activée sur le port 6053 ?",
+      "bad_key": "La clé de chiffrement est incorrecte.",
+      "no_encryption": "Ce pont n'a pas de chiffrement d'API. Définissez une api_encryption_key dans sa configuration.",
+      "not_bridge": "Cet appareil ESPHome n'est pas un pont Samsung HVAC Local.",
+      "no_units": "Le pont ne signale aucune unité intérieure. Vérifiez sa configuration.",
+      "generic": "Connexion au pont impossible : __message__"
+    }
+  },
+  "device": {
+    "connecting": "Connexion au pont…",
+    "offline": "Le pont est injoignable.",
+    "bad_key": "La clé de chiffrement n'est plus acceptée. Réparez l'appareil.",
+    "unit_missing": "Cette unité intérieure ne figure plus dans la configuration du pont.",
+    "standby": "Le climatiseur est en veille profonde : les valeurs seront mises à jour à son réveil.",
+    "not_supported": "Votre climatiseur ne prend pas en charge ce réglage.",
+    "windfree_mode": "WindFree ne fonctionne qu'en mode Refroidir ou Déshumidifier."
+  }
+}

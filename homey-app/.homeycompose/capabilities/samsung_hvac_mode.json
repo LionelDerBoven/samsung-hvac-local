@@ -1,0 +1,54 @@
+{
+  "type": "enum",
+  "title": {
+    "en": "Mode",
+    "nl": "Modus",
+    "fr": "Mode"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "picker",
+  "icon": "/assets/capabilities/mode.svg",
+  "values": [
+    {
+      "id": "cool",
+      "title": {
+        "en": "Cool",
+        "nl": "Koelen",
+        "fr": "Refroidir"
+      }
+    },
+    {
+      "id": "heat",
+      "title": {
+        "en": "Heat",
+        "nl": "Verwarmen",
+        "fr": "Chauffer"
+      }
+    },
+    {
+      "id": "dry",
+      "title": {
+        "en": "Dry",
+        "nl": "Drogen",
+        "fr": "Déshumidifier"
+      }
+    },
+    {
+      "id": "fan",
+      "title": {
+        "en": "Fan",
+        "nl": "Ventileren",
+        "fr": "Ventiler"
+      }
+    },
+    {
+      "id": "auto",
+      "title": {
+        "en": "Auto",
+        "nl": "Auto",
+        "fr": "Auto"
+      }
+    }
+  ]
+}
