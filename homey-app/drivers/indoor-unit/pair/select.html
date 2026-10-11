@@ -5,26 +5,26 @@
 </style>
 
 <p class="homey-subtitle" data-i18n="pair.select_intro"></p>
-<div id="list"></div>
-<p id="error" class="hv-error" hidden></p>
-<button id="manual" type="button" class="homey-button-secondary-shadow-full" data-i18n="pair.manual_button"></button>
+<div id="sel-list"></div>
+<p id="sel-error" class="hv-error" hidden></p>
+<button id="sel-manual" type="button" class="homey-button-secondary-shadow-full" data-i18n="pair.manual_button"></button>
 
 <script type="application/javascript">
   (function () {
-    var list = document.getElementById('list');
-    var error = document.getElementById('error');
+    var list = document.getElementById('sel-list');
+    var error = document.getElementById('sel-error');
 
     function choose(item) {
       error.hidden = true;
       Homey.emit('set_host', { host: item.host, port: item.port })
-        .then(function () { Homey.showView('key'); })
+        .then(function () { Homey.showView('api_key'); })
         .catch(function (err) {
           error.textContent = err && err.message ? err.message : String(err);
           error.hidden = false;
         });
     }
 
-    document.getElementById('manual').addEventListener('click', function () {
+    document.getElementById('sel-manual').addEventListener('click', function () {
       Homey.showView('manual');
     });
 

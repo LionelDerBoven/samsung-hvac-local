@@ -116,7 +116,7 @@
           }
         },
         {
-          "id": "key",
+          "id": "api_key",
           "navigation": {
             "prev": "select"
           }
@@ -125,7 +125,7 @@
           "id": "list_devices",
           "template": "list_devices",
           "navigation": {
-            "prev": "key",
+            "prev": "api_key",
             "next": "add_devices"
           }
         },

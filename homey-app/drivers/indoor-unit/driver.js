@@ -24,6 +24,7 @@ class IndoorUnitDriver extends Homey.Driver {
       if (!address) throw new Error(this.homey.__('pair.errors.no_host'));
       pending.host = address;
       pending.port = Number(port) || 6053;
+      this.log('pair: host set');
       return true;
     });
 
@@ -40,8 +41,10 @@ class IndoorUnitDriver extends Homey.Driver {
         pending.mac = normaliseMac(info.mac);
         pending.bridgeName = info.friendlyName || info.name;
         pending.units = units.indoor.map((u) => ({ deviceId: u.deviceId, name: u.name }));
+        this.log(`pair: connected, ${pending.units.length} indoor unit(s)`);
         return true;
       } catch (err) {
+        this.log(`pair: connect failed (${err.code || err.message})`);
         throw new Error(this.describeError(err));
       } finally {
         conn.close();
@@ -49,6 +52,7 @@ class IndoorUnitDriver extends Homey.Driver {
     });
 
     session.setHandler('list_devices', async () => {
+      this.log(`pair: list_devices (${pending.units.length} unit(s))`);
       const paired = new Set(this.getDevices().map((d) => d.getData().id));
       return pending.units
         .map((u) => ({

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f3f4f6"/><stop offset="1" stop-color="#dfe2e7"/>
+    </linearGradient>
+    <linearGradient id="front" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbfbfc"/><stop offset="1" stop-color="#eceef1"/>
+    </linearGradient>
+    <linearGradient id="vane" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d5d9df"/><stop offset="1" stop-color="#f4f5f7"/>
+    </linearGradient>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#000" flood-opacity=".14"/>
+    </filter>
+  </defs>
+  <rect width="1000" height="1000" fill="#fff"/>
+  <ellipse cx="500" cy="672" rx="380" ry="26" fill="#000" opacity=".08"/>
+  <g>
+    <path d="M110 365 Q110 330 145 330 H855 Q890 330 890 365 V585 Q890 640 835 648 Q500 690 165 648 Q110 640 110 585 Z" fill="url(#body)" stroke="#d9dce1" stroke-width="3"/>
+  </g>
+  <path d="M128 372 Q128 348 152 348 H848 Q872 348 872 372 V520 H128 Z" fill="url(#front)"/>
+  <path d="M128 520 H872" stroke="#d3d7dd" stroke-width="3"/>
+  <path d="M190 560 Q500 588 810 560 L800 605 Q500 632 200 605 Z" fill="#2b2f36"/>
+  <path d="M200 600 Q500 628 800 600 L795 618 Q500 646 205 618 Z" fill="url(#vane)"/>
+  <rect x="770" y="470" width="44" height="24" rx="5" fill="#1f2937"/>
+  <text x="792" y="488" font-family="DejaVu Sans Mono,monospace" font-size="17" fill="#7dd3fc" text-anchor="middle">22</text>
+  <circle cx="835" cy="482" r="4" fill="#9ca3af"/>
+</svg>

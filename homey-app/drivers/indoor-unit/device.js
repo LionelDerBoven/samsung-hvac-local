@@ -94,6 +94,8 @@ class IndoorUnitDevice extends Homey.Device {
       case 'climate': {
         const c = climateToHomey(value);
         await this.update('onoff', c.on);
+        // While off, show the mode the AC returns to when switched on.
+        if (!c.mode) await this.update('samsung_hvac_mode', this.lastMode);
         if (c.mode) {
           await this.update('samsung_hvac_mode', c.mode);
           if (c.mode !== this.lastMode) {

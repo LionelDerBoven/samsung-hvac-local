@@ -3,26 +3,26 @@
 </style>
 
 <p class="homey-subtitle" data-i18n="pair.manual_intro"></p>
-<form id="form" class="homey-form">
+<form id="man-form" class="homey-form" action="javascript:void(0)">
   <div class="homey-form-group">
-    <label class="homey-form-label" for="host" data-i18n="pair.host_label"></label>
-    <input class="homey-form-input" id="host" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+    <label class="homey-form-label" for="man-host" data-i18n="pair.host_label"></label>
+    <input class="homey-form-input" id="man-host" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required>
   </div>
-  <p id="error" class="hv-error" hidden></p>
+  <p id="man-error" class="hv-error" hidden></p>
   <button type="submit" class="homey-button-primary-full" data-i18n="pair.next"></button>
 </form>
 
 <script type="application/javascript">
   (function () {
-    var error = document.getElementById('error');
-    document.getElementById('host').placeholder = Homey.__('pair.host_placeholder');
-    document.getElementById('form').addEventListener('submit', function (e) {
+    var error = document.getElementById('man-error');
+    document.getElementById('man-host').placeholder = Homey.__('pair.host_placeholder');
+    document.getElementById('man-form').addEventListener('submit', function (e) {
       e.preventDefault();
       error.hidden = true;
-      var value = document.getElementById('host').value.trim();
+      var value = document.getElementById('man-host').value.trim();
       var parts = value.split(':');
       Homey.emit('set_host', { host: parts[0], port: parts[1] })
-        .then(function () { Homey.showView('key'); })
+        .then(function () { Homey.showView('api_key'); })
         .catch(function (err) {
           error.textContent = err && err.message ? err.message : String(err);
           error.hidden = false;
