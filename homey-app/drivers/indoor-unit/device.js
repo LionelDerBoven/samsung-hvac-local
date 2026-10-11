@@ -7,8 +7,8 @@ const {
 
 // Capabilities that are sent to the AC as one climate command (bundled, see onClimateChange).
 const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
-// Order of the pickers in the device view.
-const PICKERS = ['samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
+// Order of the pickers. Homey's app opens the picker tab on the last one, so the mode comes last.
+const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
 // Bump when capability options in the manifest change: affected capabilities are re-added once.
 const CAPS_REVISION = 3;
 const REVISED_CAPS = ['button.filter_reset']; // rev 3: filter reset back to a maintenance action
