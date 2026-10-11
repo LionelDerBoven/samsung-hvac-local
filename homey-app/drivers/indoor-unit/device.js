@@ -32,6 +32,9 @@ class IndoorUnitDevice extends Homey.Device {
     this.onBridgeState = (key, value) => this.onState(key, value);
     this.onBridgeStatus = (online, err) => this.onStatus(online, err);
 
+    // Class "thermostat": Homey's tile then shows target and room temperature (like other climate devices).
+    if (this.getClass() !== 'thermostat') await this.setClass('thermostat').catch(this.error);
+
     this.registerMultipleCapabilityListener(CLIMATE_CAPS, (values) => this.onClimateChange(values), 300);
     this.registerCapabilityListener('onoff.auto_clean', (value) => this.sendSwitch('auto_clean', value));
     this.registerCapabilityListener('button.filter_reset', () => this.resetFilter());

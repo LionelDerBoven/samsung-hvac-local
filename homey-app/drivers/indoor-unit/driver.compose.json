@@ -4,7 +4,7 @@
     "nl": "Binnenunit",
     "fr": "Unité intérieure"
   },
-  "class": "airconditioning",
+  "class": "thermostat",
   "capabilities": [
     "onoff",
     "target_temperature",
