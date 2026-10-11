@@ -1,0 +1,34 @@
+# Samsung HVAC Local: the outdoor unit (contract v1)
+#
+# Include once, with vars:
+#   address:   NASA address of the outdoor unit, usually "10.00.00"
+#   unit_id:   short id, e.g. outdoor
+#   unit_name: display name of the sub-device, e.g. "Outdoor unit"
+#
+# Power and energy are measured by the outdoor unit and cover the whole system
+# (the indoor fans of a multi-split are not included).
+
+esphome:
+  devices:
+    - id: ${unit_id}
+      name: "${unit_name}"
+
+samsung_ac:
+  devices:
+    - address: "${address}"
+      outdoor_temperature:
+        name: "Outdoor temperature"
+        device_id: ${unit_id}
+        on_value:
+          - lambda: id(bus_seen) = true; id(last_bus_ms) = millis();
+      outdoor_instantaneous_power:
+        name: "Power"
+        device_id: ${unit_id}
+      outdoor_cumulative_energy:
+        name: "Energy"
+        device_id: ${unit_id}
+      error_code:
+        name: "Error code"
+        device_id: ${unit_id}
+        on_value:
+          - lambda: id(hvac_error_active) = x > 0;

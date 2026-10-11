@@ -1,0 +1,79 @@
+# Samsung HVAC Local: one indoor unit (contract v1)
+#
+# Include once per indoor unit, with vars:
+#   address:   NASA address of the indoor unit, e.g. "20.00.00" (see the logs: "Discovered devices")
+#   unit_id:   short id, lowercase, no spaces, e.g. living
+#   unit_name: display name of the unit (sub-device), e.g. "Living"
+#
+#   packages:
+#     living: !include { file: units/indoor.yaml, vars: { address: "20.00.00", unit_id: living, unit_name: "Living" } }
+
+esphome:
+  devices:
+    - id: ${unit_id}
+      name: "${unit_name}"
+
+samsung_ac:
+  devices:
+    - address: "${address}"
+      climate:
+        id: ${unit_id}_climate
+        name: "Climate"
+        device_id: ${unit_id}
+      room_temperature:
+        name: "Room temperature"
+        device_id: ${unit_id}
+        on_value:
+          - lambda: id(bus_seen) = true; id(last_bus_ms) = millis();
+      room_humidity:
+        name: "Room humidity"
+        device_id: ${unit_id}
+      indoor_eva_in_temperature:
+        name: "EVA in temperature"
+        device_id: ${unit_id}
+        entity_category: diagnostic
+      indoor_eva_out_temperature:
+        name: "EVA out temperature"
+        device_id: ${unit_id}
+        entity_category: diagnostic
+      automatic_cleaning:
+        name: "Auto clean"
+        device_id: ${unit_id}
+      # NASA 0x4025: reset the filter counter
+      filter_reset:
+        name: "Filter reset"
+        device_id: ${unit_id}
+      custom_sensor:
+        # NASA 0x4027: filter needs cleaning
+        - name: "Filter alarm"
+          device_id: ${unit_id}
+          message: 0x4027
+          type: binary
+          device_class: problem
+        # NASA 0x4222: filter usage in hours
+        - name: "Filter hours"
+          id: ${unit_id}_filter_hours
+          device_id: ${unit_id}
+          message: 0x4222
+          unit_of_measurement: h
+          entity_category: diagnostic
+        # NASA 0x42E5: filter capacity in hours (e.g. 500)
+        - name: "Filter capacity"
+          id: ${unit_id}_filter_capacity
+          device_id: ${unit_id}
+          message: 0x42E5
+          unit_of_measurement: h
+          entity_category: diagnostic
+
+sensor:
+  - platform: template
+    name: "Filter usage"
+    device_id: ${unit_id}
+    unit_of_measurement: "%"
+    icon: mdi:air-filter
+    accuracy_decimals: 0
+    update_interval: 60s
+    lambda: |-
+      auto h = id(${unit_id}_filter_hours), c = id(${unit_id}_filter_capacity);
+      if (!h->has_state() || !c->has_state() || c->state <= 0) return {};
+      return floor(h->state * 100.0f / c->state);

@@ -1,0 +1,109 @@
+# Samsung HVAC Local: bridge core (contract v1, see ../CONTRACT.md)
+#
+# Reads and controls Samsung air conditioners over the F1/F2 bus (NASA protocol) and exposes
+# them through the ESPHome native API. Combine with:
+#   - one board package   (boards/*.yaml: ESP32, RS485 UART, optional status LED/button)
+#   - one or more units    (units/indoor.yaml per indoor unit, units/outdoor.yaml once)
+# See ../esphome/example.yaml.
+#
+# Entity names below are part of the contract: the Homey app finds entities by domain + name.
+# Rename them in Home Assistant or Homey, not here.
+
+substitutions:
+  # Feature flags for the climate entity (set to "false" if your model lacks the feature)
+  cap_windfree: "true"
+  cap_quiet: "true"
+  cap_fast: "true"
+  cap_sleep: "true"
+  cap_eco: "true"
+  cap_longreach: "true"
+  cap_vertical_swing: "true"
+  cap_horizontal_swing: "true"
+
+esphome:
+  project:
+    name: ldbtechnology.samsung_hvac_local
+    version: "0.1.0" # bridge version; contract version is in the "Contract" text sensor
+  on_boot:
+    - text_sensor.template.publish:
+        id: hvac_contract
+        state: "1"
+
+api:
+
+logger:
+  level: DEBUG
+  logs:
+    component: ERROR # hides "component took too long" warnings
+    samsung_ac: INFO
+    device_state_tracker: INFO # hides "No change in value"
+
+external_components:
+  - source: github://omerfaruk-aran/esphome_samsung_hvac_bus@fe08cb0465974895fee6e20a961c8beee28d13fc
+    components: [samsung_ac]
+
+samsung_ac:
+  non_nasa_keepalive: true
+  non_nasa_tx_delay_ms: 30
+  debug_log_messages_on_change: true
+  debug_log_messages: false
+  debug_log_undefined_messages: false
+  capabilities:
+    fan_modes: true
+    vertical_swing: ${cap_vertical_swing}
+    horizontal_swing: ${cap_horizontal_swing}
+    presets:
+      windfree: ${cap_windfree}
+      quiet: ${cap_quiet}
+      fast: ${cap_fast}
+      sleep: ${cap_sleep}
+      eco: ${cap_eco}
+      longreach: ${cap_longreach}
+
+# Bus activity, maintained by the unit packages (on_value of periodic sensors).
+globals:
+  - id: bus_seen
+    type: bool
+    initial_value: "false"
+  - id: last_bus_ms
+    type: uint32_t
+    initial_value: "0"
+  - id: hvac_error_active
+    type: bool
+    initial_value: "false"
+
+text_sensor:
+  - platform: template
+    name: "Contract"
+    id: hvac_contract
+    entity_category: diagnostic
+    icon: mdi:handshake-outline
+    update_interval: never # published once at boot (see esphome.on_boot)
+  - platform: wifi_info
+    ip_address:
+      name: "IP address"
+    mac_address:
+      name: "MAC address"
+
+binary_sensor:
+  # On when the AC talked on the bus in the last 5 minutes. Off is normal while the
+  # AC is in deep standby (it stops talking after being off for a while).
+  - platform: template
+    name: "Bus active"
+    id: hvac_bus_active
+    device_class: connectivity
+    entity_category: diagnostic
+    lambda: return id(bus_seen) && (millis() - id(last_bus_ms) < 300000UL);
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi signal"
+    update_interval: 60s
+  - platform: uptime
+    name: "Uptime"
+
+button:
+  - platform: restart
+    id: hvac_restart
+    name: "Restart"
+    entity_category: config

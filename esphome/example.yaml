@@ -1,0 +1,63 @@
+# Samsung HVAC Local: example configuration
+#
+# Copy this file next to a checkout of this repository (or use the remote form below),
+# fill in your secrets.yaml and adjust the addresses/names. Flash it once over USB,
+# afterwards updates go over the air.
+
+substitutions:
+  web_username: !secret web_username
+  web_password: !secret web_password
+
+esphome:
+  name: samsung-hvac-living
+  friendly_name: Living AC
+
+packages:
+  # Local checkout of the repository:
+  bridge: !include samsung-hvac-local/esphome/samsung-hvac-bridge.yaml
+  board: !include samsung-hvac-local/esphome/boards/m5stack-atom-rs485.yaml
+  living: !include
+    file: samsung-hvac-local/esphome/units/indoor.yaml
+    vars: { address: "20.00.00", unit_id: living, unit_name: "Living" }
+  # Multi-split: add one more indoor unit per address, e.g.
+  # bedroom: !include
+  #   file: samsung-hvac-local/esphome/units/indoor.yaml
+  #   vars: { address: "20.00.01", unit_id: bedroom, unit_name: "Bedroom" }
+  outdoor: !include
+    file: samsung-hvac-local/esphome/units/outdoor.yaml
+    vars: { address: "10.00.00", unit_id: outdoor, unit_name: "Outdoor unit" }
+  # Optional local web interface:
+  # web: !include samsung-hvac-local/esphome/extras/web-ui.yaml
+
+  # Remote form (no checkout needed, pin a release tag):
+  # remote:
+  #   url: https://github.com/LionelDerBoven/samsung-hvac-local
+  #   ref: v0.1.0
+  #   files:
+  #     - esphome/samsung-hvac-bridge.yaml
+  #     - esphome/boards/m5stack-atom-rs485.yaml
+  #     - path: esphome/units/indoor.yaml
+  #       vars: { address: "20.00.00", unit_id: living, unit_name: "Living" }
+  #     - path: esphome/units/outdoor.yaml
+  #       vars: { address: "10.00.00", unit_id: outdoor, unit_name: "Outdoor unit" }
+
+# Model without WindFree, horizontal swing, ...? Override the feature flags:
+# substitutions:
+#   cap_windfree: "false"
+
+api:
+  encryption:
+    key: !secret api_encryption_key # generate one: https://esphome.io/components/api
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Samsung-HVAC-Fallback"
+    password: !secret fallback_ap_password
+
+captive_portal:

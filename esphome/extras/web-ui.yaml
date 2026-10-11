@@ -1,0 +1,27 @@
+# Samsung HVAC Local: optional local web interface (http://<bridge-ip>/)
+#
+# Control page + maintenance/troubleshooting page with a live log. Works fully offline:
+# the page script is compiled into the firmware and served as /0.js.
+# Set the substitutions web_username / web_password (e.g. from your secrets.yaml).
+#
+# Note: js_include is resolved relative to your main config, so include this file from a
+# local checkout of the repository (the path below assumes the repo next to your config).
+
+substitutions:
+  web_ui_js: samsung-hvac-local/esphome/extras/web/app.js
+
+web_server:
+  port: 80
+  version: 3
+  js_url: ""
+  js_include: ${web_ui_js}
+  ota: false # firmware upload through the page is off; use OTA with a password/key instead
+  log: true
+  auth:
+    type: digest
+    username: ${web_username}
+    password: ${web_password}
+
+logger:
+  logs:
+    web_server_idf: INFO # hides "Event source connection closed"

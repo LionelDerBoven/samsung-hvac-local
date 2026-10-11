@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 40" role="img" aria-label="HVAC Local">
+  <g fill="none" stroke="#0b63c5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(2,2) scale(.56)">
+    <rect x="6" y="12" width="52" height="22" rx="6"/><path d="M13 27h38"/>
+    <path d="M20 40c-3 4 3 7 0 12M32 40c-3 4 3 7 0 12M44 40c-3 4 3 7 0 12"/>
+  </g>
+  <text x="44" y="28" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" font-size="22" font-weight="800" fill="#111">HVAC <tspan fill="#0b63c5" font-weight="600">Local</tspan></text>
+</svg>

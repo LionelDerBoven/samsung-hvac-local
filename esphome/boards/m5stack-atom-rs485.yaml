@@ -1,0 +1,82 @@
+# Samsung HVAC Local: board package for M5Stack ATOM Lite + ATOMIC RS485 Base
+#
+# Power: the RS485 Base "DC" input takes 6/12-24 V (the ATOM is fed through the base).
+# Bus:   F1 -> A, F2 -> B (swap if no data; this does no harm).
+#
+# Status LED (SK6812, GPIO27):
+#   green = OK · blinking blue = no WiFi · orange = no bus data for 5 min (also normal in deep
+#   standby) · red = the AC reports an error code
+# Button (GPIO39): hold >= 3 s and release = restart (LED flashes white)
+
+esp32:
+  board: m5stack-atom
+
+uart:
+  tx_pin: GPIO19
+  rx_pin: GPIO22
+  baud_rate: 9600
+  parity: EVEN
+  rx_buffer_size: 2048
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: status_led
+    internal: true
+    pin: GPIO27
+    num_leds: 1
+    chipset: SK6812
+    channel_colors: GRB
+    restore_mode: ALWAYS_OFF
+    default_transition_length: 0s
+
+globals:
+  - id: led_state
+    type: int
+    initial_value: "-1"
+
+interval:
+  - interval: 1s
+    then:
+      - lambda: |-
+          int st;
+          if (!wifi::global_wifi_component->is_connected()) st = 1;                         // no WiFi
+          else if (id(hvac_error_active)) st = 2;                                           // error code
+          else if (!id(bus_seen) || millis() - id(last_bus_ms) > 300000UL) st = 3;          // bus silent
+          else st = 0;                                                                      // OK
+          static bool blink = false;
+          blink = !blink;
+          if (st == id(led_state) && st != 1) return;
+          id(led_state) = st;
+          if (st == 1 && !blink) { id(status_led).turn_off().perform(); return; }
+          float r = 0, g = 0, b = 0;
+          switch (st) {
+            case 0: g = 1; break;
+            case 1: b = 1; break;
+            case 2: r = 1; break;
+            case 3: r = 1; g = 0.35; break;
+          }
+          auto call = id(status_led).turn_on();
+          call.set_rgb(r, g, b);
+          call.set_brightness(0.35);
+          call.set_transition_length(0);
+          call.perform();
+
+binary_sensor:
+  - platform: gpio
+    id: board_button
+    internal: true
+    pin:
+      number: GPIO39
+      inverted: true
+    on_click:
+      min_length: 3s
+      max_length: 15s
+      then:
+        - light.turn_on:
+            id: status_led
+            red: 100%
+            green: 100%
+            blue: 100%
+            brightness: 50%
+        - delay: 500ms
+        - button.press: hvac_restart
