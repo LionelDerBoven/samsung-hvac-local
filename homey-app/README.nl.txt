@@ -1,2 +1,2 @@
 Bedien je Samsung-airco vanuit Homey zonder cloud. Een kleine ESPHome-bridge op de F1/F2-bus van de binnenunit praat rechtstreeks met de airco, en deze app geeft je per binnenunit één volledig Homey-apparaat: aan/uit, modus, temperatuur, ventilatorsnelheid, windrichting, WindFree en de andere speciale modi, plus kamer- en buitentemperatuur, vochtigheid en het verbruik van de buitenunit in Homey Energy.
-Onofficieel communityproject, niet verbonden aan Samsung. Je hebt een bridge nodig die gebouwd is met de Samsung HVAC Local ESPHome-pakketten.
+Onofficieel communityproject, niet verbonden aan Samsung. Je hebt een bridge nodig die bestaat uit een M5Stack ATOM Lite met de ATOM RS485-basis, met de Samsung HVAC Local-firmware (ESPHome).
