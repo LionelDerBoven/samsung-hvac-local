@@ -20,8 +20,12 @@
       e.preventDefault();
       error.hidden = true;
       var value = document.getElementById('man-host').value.trim();
-      var parts = value.split(':');
-      Homey.emit('set_host', { host: parts[0], port: parts[1] })
+      // host, host:port, [IPv6]:port or a bare IPv6 address (more than one colon, no port)
+      var host = value, port;
+      var bracket = value.match(/^\[([^\]]+)\](?::(\d+))?$/);
+      if (bracket) { host = bracket[1]; port = bracket[2]; }
+      else if (value.split(':').length === 2) { host = value.split(':')[0]; port = value.split(':')[1]; }
+      Homey.emit('set_host', { host: host, port: port })
         .then(function () { Homey.showView('api_key'); })
         .catch(function (err) {
           error.textContent = err && err.message ? err.message : String(err);

@@ -9,7 +9,6 @@ const {
 const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsung_fan_speed', 'samsung_swing', 'samsung_preset'];
 // Order of the pickers. Homey's app opens the picker tab on the last one, so the mode comes last.
 const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
-// Bump when capability options in the manifest change: affected capabilities are re-added once.
 // Capability options in the manifest that changed after devices were paired. Homey does not apply them to existing
 // devices, so each revision is applied once: `readd` removes and re-adds (history lost), `options` re-applies the
 // manifest options in place (history kept). The device stores the last revision it applied.
@@ -167,13 +166,17 @@ class IndoorUnitDevice extends Homey.Device {
     }
   }
 
-  /** The values option of an enum capability; getCapabilityOptions throws while no options were ever set. */
-  optionValues(cap) {
+  /** Options of a capability; getCapabilityOptions throws while no options were ever set for it. */
+  capabilityOptions(cap) {
     try {
-      return (this.getCapabilityOptions(cap) || {}).values;
+      return this.getCapabilityOptions(cap) || {};
     } catch (err) {
-      return undefined;
+      return {};
     }
+  }
+
+  optionValues(cap) {
+    return this.capabilityOptions(cap).values;
   }
 
   /** Temperature range and step as configured on the bridge (target_step: 1 or 0.5 °C). */
@@ -181,7 +184,7 @@ class IndoorUnitDevice extends Homey.Device {
     if (!this.traits) return;
     const { min, max, step } = this.traits;
     const decimals = step < 1 ? 1 : 0;
-    const opts = this.getCapabilityOptions('target_temperature') || {};
+    const opts = this.capabilityOptions('target_temperature');
     if (opts.min !== min || opts.max !== max || opts.step !== step || opts.decimals !== decimals) {
       await this.setCapabilityOptions('target_temperature', {
         min, max, step, decimals,
