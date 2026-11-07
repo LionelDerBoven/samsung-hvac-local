@@ -24,7 +24,7 @@
   "device": {
     "connecting": "Connecting to the bridge…",
     "offline": "The bridge is not reachable.",
-    "bad_key": "The encryption key is no longer accepted. Repair the device.",
+    "bad_key": "The encryption key is no longer accepted. Remove the device and add it again.",
     "unit_missing": "This indoor unit is no longer in the bridge configuration.",
     "standby": "The air conditioner is in deep standby: values update once it wakes up.",
     "not_supported": "This setting is not supported by your air conditioner.",

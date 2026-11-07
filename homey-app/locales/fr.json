@@ -24,7 +24,7 @@
   "device": {
     "connecting": "Connexion au pont…",
     "offline": "Le pont est injoignable.",
-    "bad_key": "La clé de chiffrement n'est plus acceptée. Réparez l'appareil.",
+    "bad_key": "La clé de chiffrement n'est plus acceptée. Supprimez l'appareil et ajoutez-le à nouveau.",
     "unit_missing": "Cette unité intérieure ne figure plus dans la configuration du pont.",
     "standby": "Le climatiseur est en veille profonde : les valeurs seront mises à jour à son réveil.",
     "not_supported": "Votre climatiseur ne prend pas en charge ce réglage.",

@@ -29,8 +29,8 @@ class IndoorUnitDevice extends Homey.Device {
     this.outdoor = null;
     this.roleByKey = new Map(); // entity key → role, for this unit only (~20 entries)
     this.lastMode = this.getStoreValue('lastMode') || 'cool';
-    this.onBridgeState = (key, value) => this.onState(key, value);
-    this.onBridgeStatus = (online, err) => this.onStatus(online, err);
+    this.onBridgeState = (key, value) => this.onState(key, value).catch(this.error);
+    this.onBridgeStatus = (online, err) => this.onStatus(online, err).catch(this.error);
 
     if (this.getClass() !== 'airconditioning') await this.setClass('airconditioning').catch(this.error);
 
@@ -56,6 +56,7 @@ class IndoorUnitDevice extends Homey.Device {
       await this.setUnavailable(this.homey.__(reason)).catch(this.error);
       return;
     }
+    if (!this.bridge) return; // deleted or uninitialised while an event was in flight
     const unit = this.bridge.indoorUnit(this.getStore().deviceId);
     if (!unit) {
       await this.setUnavailable(this.homey.__('device.unit_missing')).catch(this.error);
@@ -71,9 +72,11 @@ class IndoorUnitDevice extends Homey.Device {
     if (this.bridgeRoles.bus_active) this.roleByKey.set(this.bridgeRoles.bus_active.key, 'bus_active');
 
     await this.syncCapabilities();
+    if (!this.bridge) return;
     await this.setAvailable().catch(this.error);
     // Replay what the bridge already knows (states arrive before devices may have set up).
     for (const key of this.roleByKey.keys()) {
+      if (!this.bridge) return;
       if (this.bridge.states.has(key)) await this.onState(key, this.bridge.states.get(key));
     }
   }

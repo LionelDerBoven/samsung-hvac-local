@@ -73,7 +73,8 @@ class Bridge extends EventEmitter {
     } catch (err) {
       conn.removeAllListeners();
       conn.close();
-      if (this.conn === conn) this.conn = null;
+      if (this.conn !== conn) return; // replaced by setHost()/reconnect(): that attempt reports instead
+      this.conn = null;
       this.setOnline(false, err);
       this.scheduleRetry();
     }

@@ -24,7 +24,7 @@
   "device": {
     "connecting": "Verbinden met de bridge…",
     "offline": "De bridge is niet bereikbaar.",
-    "bad_key": "De encryptiesleutel wordt niet meer aanvaard. Herstel het apparaat.",
+    "bad_key": "De encryptiesleutel wordt niet meer aanvaard. Verwijder het apparaat en voeg het opnieuw toe.",
     "unit_missing": "Deze binnenunit staat niet meer in de configuratie van de bridge.",
     "standby": "De airco staat in diepe stand-by: de waarden worden bijgewerkt zodra hij ontwaakt.",
     "not_supported": "Je airco ondersteunt deze instelling niet.",
