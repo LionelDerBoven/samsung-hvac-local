@@ -2,11 +2,7 @@
 
 const Homey = require('homey');
 const { Bridge } = require('./lib/bridge');
-const { PROJECT_NAME } = require('./lib/contract');
-
-function normaliseMac(mac) {
-  return String(mac || '').replace(/[^0-9a-f]/gi, '').toLowerCase();
-}
+const { PROJECT_NAME, normaliseMac } = require('./lib/contract');
 
 /**
  * Keeps one shared Bridge per ESPHome node (keyed by MAC address) and follows address

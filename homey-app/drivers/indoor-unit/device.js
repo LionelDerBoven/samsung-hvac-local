@@ -31,6 +31,7 @@ class IndoorUnitDevice extends Homey.Device {
     this.lastMode = this.getStoreValue('lastMode') || 'cool';
     this.onBridgeState = (key, value) => this.onState(key, value).catch(this.error);
     this.onBridgeStatus = (online, err) => this.onStatus(online, err).catch(this.error);
+    this.onBridgeContract = (mismatch) => this.showContract(mismatch).catch(this.error);
 
     if (this.getClass() !== 'airconditioning') await this.setClass('airconditioning').catch(this.error);
 
@@ -43,6 +44,7 @@ class IndoorUnitDevice extends Homey.Device {
     this.bridge = this.homey.app.getBridge(store);
     this.bridge.on('state', this.onBridgeState);
     this.bridge.on('status', this.onBridgeStatus);
+    this.bridge.on('contract', this.onBridgeContract);
     if (this.bridge.online) this.onStatus(true).catch(this.error);
     else this.setUnavailable(this.homey.__('device.connecting')).catch(this.error);
   }
@@ -74,6 +76,7 @@ class IndoorUnitDevice extends Homey.Device {
     await this.syncCapabilities();
     if (!this.bridge) return;
     await this.setAvailable().catch(this.error);
+    await this.showContract(this.bridge.contractMismatch());
     // Replay what the bridge already knows (states arrive before devices may have set up).
     for (const key of this.roleByKey.keys()) {
       if (!this.bridge) return;
@@ -270,12 +273,24 @@ class IndoorUnitDevice extends Homey.Device {
     }
   }
 
+  /** Warns on the device when the bridge firmware speaks another contract major than this app. */
+  async showContract(mismatch) {
+    if (mismatch) {
+      this.contractWarning = true;
+      await this.setWarning(this.homey.__('device.firmware_mismatch')).catch(this.error);
+    } else if (this.contractWarning) { // only clear our own warning, not the standby one
+      this.contractWarning = false;
+      await this.unsetWarning().catch(this.error);
+    }
+  }
+
   // ---------- lifecycle ----------
 
   detach() {
     if (!this.bridge) return;
     this.bridge.removeListener('state', this.onBridgeState);
     this.bridge.removeListener('status', this.onBridgeStatus);
+    this.bridge.removeListener('contract', this.onBridgeContract);
     this.homey.app.releaseBridge(this.getStore().mac);
     this.bridge = null;
   }

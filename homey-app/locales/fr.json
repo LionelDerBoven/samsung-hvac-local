@@ -28,7 +28,8 @@
     "unit_missing": "Cette unité intérieure ne figure plus dans la configuration du pont.",
     "standby": "Le climatiseur est en veille profonde : les valeurs seront mises à jour à son réveil.",
     "not_supported": "Votre climatiseur ne prend pas en charge ce réglage.",
-    "windfree_mode": "WindFree ne fonctionne qu'en mode Refroidir ou Déshumidifier."
+    "windfree_mode": "WindFree ne fonctionne qu'en mode Refroidir ou Déshumidifier.",
+    "firmware_mismatch": "Le firmware du pont ne correspond pas à cette version de l'app. Mettez à jour le pont ou l'app."
   },
   "flow": {
     "mode": {

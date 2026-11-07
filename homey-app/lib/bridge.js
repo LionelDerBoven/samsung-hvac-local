@@ -84,9 +84,14 @@ class Bridge extends EventEmitter {
     this.states.set(key, value);
     this.emit('state', key, value);
     const contract = this.units && this.units.bridge.roles.contract;
-    if (contract && key === contract.key && value && !String(value).startsWith(CONTRACT_MAJOR)) {
-      this.emit('contract-mismatch', value);
-    }
+    if (contract && key === contract.key) this.emit('contract', this.contractMismatch());
+  }
+
+  /** The bridge's contract version when its major differs from this app's, else null. */
+  contractMismatch() {
+    const contract = this.units && this.units.bridge.roles.contract;
+    const value = contract && this.states.get(contract.key);
+    return value && !String(value).startsWith(CONTRACT_MAJOR) ? String(value) : null;
   }
 
   onClose(conn, err) {

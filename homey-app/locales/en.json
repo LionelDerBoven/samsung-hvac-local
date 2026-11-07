@@ -28,7 +28,8 @@
     "unit_missing": "This indoor unit is no longer in the bridge configuration.",
     "standby": "The air conditioner is in deep standby: values update once it wakes up.",
     "not_supported": "This setting is not supported by your air conditioner.",
-    "windfree_mode": "WindFree only works in Cool or Dry mode."
+    "windfree_mode": "WindFree only works in Cool or Dry mode.",
+    "firmware_mismatch": "The bridge firmware does not match this version of the app. Update the bridge or the app."
   },
   "flow": {
     "mode": {

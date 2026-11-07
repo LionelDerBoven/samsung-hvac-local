@@ -2,9 +2,7 @@
 
 const Homey = require('homey');
 const { Connection } = require('../../lib/esphome/connection');
-const { groupUnits, isBridge } = require('../../lib/contract');
-
-const normaliseMac = (mac) => String(mac || '').replace(/[^0-9a-f]/gi, '').toLowerCase();
+const { groupUnits, isBridge, normaliseMac } = require('../../lib/contract');
 
 class IndoorUnitDriver extends Homey.Driver {
 

@@ -142,6 +142,11 @@ function isBridge(deviceInfo) {
   return deviceInfo && deviceInfo.projectName === PROJECT_NAME;
 }
 
+/** MAC address as lower-case hex without separators: the key of a bridge. */
+function normaliseMac(mac) {
+  return String(mac || '').replace(/[^0-9a-f]/gi, '').toLowerCase();
+}
+
 module.exports = {
-  PROJECT_NAME, CONTRACT_MAJOR, MODE, groupUnits, climateTraits, climateToHomey, command, isBridge,
+  normaliseMac, PROJECT_NAME, CONTRACT_MAJOR, MODE, groupUnits, climateTraits, climateToHomey, command, isBridge,
 };

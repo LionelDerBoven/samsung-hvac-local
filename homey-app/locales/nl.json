@@ -28,7 +28,8 @@
     "unit_missing": "Deze binnenunit staat niet meer in de configuratie van de bridge.",
     "standby": "De airco staat in diepe stand-by: de waarden worden bijgewerkt zodra hij ontwaakt.",
     "not_supported": "Je airco ondersteunt deze instelling niet.",
-    "windfree_mode": "WindFree werkt enkel in de modus Koelen of Drogen."
+    "windfree_mode": "WindFree werkt enkel in de modus Koelen of Drogen.",
+    "firmware_mismatch": "De firmware van de bridge past niet bij deze versie van de app. Werk de bridge of de app bij."
   },
   "flow": {
     "mode": {
