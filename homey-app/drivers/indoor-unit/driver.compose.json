@@ -18,11 +18,11 @@
     "samsung_swing",
     "samsung_preset",
     "samsung_hvac_mode",
-    "onoff.auto_clean",
+    "samsung_auto_clean",
     "samsung_filter_usage",
     "alarm_generic.filter",
     "button.filter_reset",
-    "alarm_generic",
+    "alarm_problem",
     "samsung_error_code",
     "measure_temperature.eva_in",
     "measure_temperature.eva_out",
@@ -63,14 +63,6 @@
         "fr": "Énergie (unité extérieure)"
       }
     },
-    "onoff.auto_clean": {
-      "title": {
-        "en": "Auto clean",
-        "nl": "Automatische reiniging",
-        "fr": "Nettoyage automatique"
-      },
-      "uiQuickAction": false
-    },
     "alarm_generic.filter": {
       "title": {
         "en": "Clean the filter",
@@ -86,7 +78,7 @@
       },
       "maintenanceAction": true
     },
-    "alarm_generic": {
+    "alarm_problem": {
       "title": {
         "en": "Fault",
         "nl": "Storing",

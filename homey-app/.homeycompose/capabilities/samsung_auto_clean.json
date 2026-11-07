@@ -1,0 +1,24 @@
+{
+  "type": "boolean",
+  "title": {
+    "en": "Auto clean",
+    "nl": "Automatische reiniging",
+    "fr": "Nettoyage automatique"
+  },
+  "insightsTitleTrue": {
+    "en": "Auto clean on",
+    "nl": "Automatische reiniging aan",
+    "fr": "Nettoyage automatique activé"
+  },
+  "insightsTitleFalse": {
+    "en": "Auto clean off",
+    "nl": "Automatische reiniging uit",
+    "fr": "Nettoyage automatique désactivé"
+  },
+  "getable": true,
+  "setable": true,
+  "uiComponent": "toggle",
+  "uiQuickAction": false,
+  "insights": true,
+  "icon": "/assets/capabilities/clean.svg"
+}

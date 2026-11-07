@@ -16,10 +16,13 @@ const REVISED_CAPS = ['button.filter_reset']; // rev 3: filter reset back to a m
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
   'samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_target_temperature',
-  'samsung_filter_usage', 'alarm_generic.filter', 'button.filter_reset', 'onoff.auto_clean',
-  'alarm_generic', 'samsung_error_code', 'measure_temperature.eva_in', 'measure_temperature.eva_out',
+  'samsung_filter_usage', 'alarm_generic.filter', 'button.filter_reset', 'samsung_auto_clean',
+  'alarm_problem', 'samsung_error_code', 'measure_temperature.eva_in', 'measure_temperature.eva_out',
   'button.restart',
 ];
+// Replaced in 0.1.2 (own Flow cards with clear titles): onoff.auto_clean → samsung_auto_clean,
+// alarm_generic (fault) → alarm_problem. Removed from devices paired with an older version.
+const LEGACY = ['onoff.auto_clean', 'alarm_generic'];
 const WINDFREE_MODES = ['cool', 'dry'];
 
 class IndoorUnitDevice extends Homey.Device {
@@ -28,6 +31,9 @@ class IndoorUnitDevice extends Homey.Device {
     this.unit = null;
     this.outdoor = null;
     this.roleByKey = new Map(); // entity key → role, for this unit only (~20 entries)
+    // What the bridge last reported, for Flow triggers. Not the capability values: Homey already sets those when a
+    // change comes from Homey itself, before the bridge confirms it. Fixed keys: climate, filter_alarm, auto_clean.
+    this.reported = {};
     this.lastMode = this.getStoreValue('lastMode') || 'cool';
     this.onBridgeState = (key, value) => this.onState(key, value).catch(this.error);
     this.onBridgeStatus = (online, err) => this.onStatus(online, err).catch(this.error);
@@ -36,7 +42,7 @@ class IndoorUnitDevice extends Homey.Device {
     if (this.getClass() !== 'airconditioning') await this.setClass('airconditioning').catch(this.error);
 
     this.registerMultipleCapabilityListener(CLIMATE_CAPS, (values) => this.onClimateChange(values), 300);
-    this.registerCapabilityListener('onoff.auto_clean', (value) => this.sendSwitch('auto_clean', value));
+    this.registerCapabilityListener('samsung_auto_clean', (value) => this.sendSwitch('auto_clean', value));
     this.registerCapabilityListener('button.filter_reset', () => this.resetFilter());
     this.registerCapabilityListener('button.restart', () => this.restartBridge());
 
@@ -94,7 +100,7 @@ class IndoorUnitDevice extends Homey.Device {
     wantIf(out.outdoor_temperature, 'measure_temperature.outdoor');
     wantIf(out.power, 'measure_power');
     wantIf(out.energy, 'meter_power');
-    wantIf(out.error_code, 'alarm_generic');
+    wantIf(out.error_code, 'alarm_problem');
     wantIf(out.error_code, 'samsung_error_code');
     wantIf(this.traits.fans.length, 'samsung_fan_speed');
     wantIf(this.traits.swings.length > 1, 'samsung_swing');
@@ -102,12 +108,15 @@ class IndoorUnitDevice extends Homey.Device {
     wantIf(roles.filter_usage, 'samsung_filter_usage');
     wantIf(roles.filter_alarm, 'alarm_generic.filter');
     wantIf(roles.filter_reset, 'button.filter_reset');
-    wantIf(roles.auto_clean, 'onoff.auto_clean');
+    wantIf(roles.auto_clean, 'samsung_auto_clean');
     wantIf(roles.eva_in, 'measure_temperature.eva_in');
     wantIf(roles.eva_out, 'measure_temperature.eva_out');
     wantIf(this.bridgeRoles.restart, 'button.restart');
     want.add('samsung_target_temperature');
 
+    for (const cap of LEGACY) {
+      if (this.hasCapability(cap)) await this.removeCapability(cap).catch(this.error);
+    }
     for (const cap of OPTIONAL) {
       if (want.has(cap) && !this.hasCapability(cap)) await this.addCapability(cap).catch(this.error);
       if (!want.has(cap) && this.hasCapability(cap)) await this.removeCapability(cap).catch(this.error);
@@ -168,11 +177,11 @@ class IndoorUnitDevice extends Homey.Device {
       case 'error_code':
         if (value === null) break;
         await this.update('samsung_error_code', value);
-        await this.update('alarm_generic', value > 0);
+        await this.update('alarm_problem', value > 0);
         break;
       case 'filter_usage': await this.update('samsung_filter_usage', value); break;
-      case 'filter_alarm': if (value !== null) await this.update('alarm_generic.filter', value); break;
-      case 'auto_clean': await this.update('onoff.auto_clean', value); break;
+      case 'filter_alarm': if (value !== null) await this.updateAndTrigger('alarm_generic.filter', value, 'filter_alarm'); break;
+      case 'auto_clean': await this.updateAndTrigger('samsung_auto_clean', value, 'auto_clean'); break;
       case 'eva_in': await this.update('measure_temperature.eva_in', value); break;
       case 'eva_out': await this.update('measure_temperature.eva_out', value); break;
       case 'bus_active':
@@ -185,8 +194,13 @@ class IndoorUnitDevice extends Homey.Device {
 
   async onClimate(value) {
     const c = climateToHomey(value);
-    const wasMode = this.getCapabilityValue('samsung_hvac_mode');
-    const wasPreset = this.getCapabilityValue('samsung_preset');
+    const was = this.reported.climate; // undefined on the first report (replay at startup)
+    this.reported.climate = {
+      mode: c.mode || 'off',
+      preset: c.preset || (was && was.preset) || null,
+      fan: c.fan || (was && was.fan) || null,
+      swing: c.swing || (was && was.swing) || null,
+    };
     await this.update('onoff', c.on);
     await this.update('samsung_hvac_mode', c.mode || 'off');
     if (c.mode && c.mode !== this.lastMode) {
@@ -201,14 +215,22 @@ class IndoorUnitDevice extends Homey.Device {
     if (c.fan) await this.update('samsung_fan_speed', c.fan);
     if (c.swing) await this.update('samsung_swing', c.swing);
     if (c.preset) await this.update('samsung_preset', c.preset);
-    // Flow triggers: only real changes of a running AC, not the replay at startup.
-    if (this.ready && c.mode && wasMode && wasMode !== 'off' && c.mode !== wasMode) {
-      this.driver.triggerModeChanged(this, c.mode);
-    }
-    if (this.ready && c.preset && wasPreset !== null && c.preset !== wasPreset) {
-      this.driver.triggerPresetChanged(this, c.preset);
-    }
-    this.ready = true;
+    // Flow triggers: real changes, whether they came from Homey, the remote or another app. The mode trigger
+    // only fires while the AC stays on (switching on or off has its own cards).
+    if (!was) return;
+    if (c.mode && was.mode !== 'off' && c.mode !== was.mode) this.driver.triggerModeChanged(this, c.mode);
+    if (c.preset && was.preset && c.preset !== was.preset) this.driver.triggerPresetChanged(this, c.preset);
+    if (c.fan && was.fan && c.fan !== was.fan) this.driver.triggerFanChanged(this, c.fan);
+    if (c.swing && was.swing && c.swing !== was.swing) this.driver.triggerSwingChanged(this, c.swing);
+  }
+
+  /** Updates a boolean capability and fires the matching <kind>_on / <kind>_off Flow trigger on a real change. */
+  async updateAndTrigger(cap, value, kind) {
+    if (!this.hasCapability(cap) || typeof value !== 'boolean') return;
+    const was = this.reported[kind];
+    this.reported[kind] = value;
+    await this.update(cap, value);
+    if (was !== undefined && was !== value) this.driver.triggerSwitch(this, kind, value);
   }
 
   async update(cap, value) {

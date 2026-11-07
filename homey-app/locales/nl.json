@@ -47,6 +47,19 @@
       "eco": "Eco",
       "sleep": "Slapen",
       "longreach": "Lange reikwijdte"
+    },
+    "fan": {
+      "auto": "Auto",
+      "low": "Laag",
+      "medium": "Midden",
+      "high": "Hoog",
+      "turbo": "Turbo"
+    },
+    "swing": {
+      "off": "Vast",
+      "vertical": "Verticaal zwaaien",
+      "horizontal": "Horizontaal zwaaien",
+      "both": "Beide richtingen"
     }
   }
 }

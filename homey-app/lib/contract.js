@@ -144,6 +144,18 @@ const command = {
   },
 };
 
+// Half a step of the finest target step (0.5 °C): values within this are equal.
+const TEMPERATURE_EPSILON = 0.25;
+
+/** Target temperature against a Flow argument: comparison is equal | above | below. */
+function compareTemperature(value, comparison, temperature) {
+  if (!Number.isFinite(value) || !Number.isFinite(temperature)) return false;
+  const diff = value - temperature;
+  if (comparison === 'above') return diff >= TEMPERATURE_EPSILON;
+  if (comparison === 'below') return diff <= -TEMPERATURE_EPSILON;
+  return Math.abs(diff) < TEMPERATURE_EPSILON;
+}
+
 function isBridge(deviceInfo) {
   return deviceInfo && deviceInfo.projectName === PROJECT_NAME;
 }
@@ -154,5 +166,5 @@ function normaliseMac(mac) {
 }
 
 module.exports = {
-  normaliseMac, PROJECT_NAME, CONTRACT_MAJOR, MODE, groupUnits, climateTraits, climateToHomey, command, isBridge,
+  normaliseMac, PROJECT_NAME, CONTRACT_MAJOR, MODE, groupUnits, climateTraits, climateToHomey, command, isBridge, compareTemperature,
 };

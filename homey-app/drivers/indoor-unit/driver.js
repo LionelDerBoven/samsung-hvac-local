@@ -2,7 +2,9 @@
 
 const Homey = require('homey');
 const { Connection } = require('../../lib/esphome/connection');
-const { groupUnits, isBridge, normaliseMac } = require('../../lib/contract');
+const {
+  groupUnits, isBridge, normaliseMac, compareTemperature,
+} = require('../../lib/contract');
 
 class IndoorUnitDriver extends Homey.Driver {
 
@@ -10,6 +12,12 @@ class IndoorUnitDriver extends Homey.Driver {
     const { flow } = this.homey;
     this.modeChanged = flow.getDeviceTriggerCard('mode_changed');
     this.presetChanged = flow.getDeviceTriggerCard('preset_changed');
+    this.fanChanged = flow.getDeviceTriggerCard('fan_speed_changed');
+    this.swingChanged = flow.getDeviceTriggerCard('swing_changed');
+    this.switchCards = {};
+    for (const kind of ['filter_alarm', 'auto_clean']) {
+      for (const state of ['on', 'off']) this.switchCards[`${kind}_${state}`] = flow.getDeviceTriggerCard(`${kind}_${state}`);
+    }
 
     // Actions run the device's own capability listeners, so Flows behave like the device view.
     const setter = (card, cap, arg) => flow.getActionCard(card)
@@ -21,12 +29,28 @@ class IndoorUnitDriver extends Homey.Driver {
     setter('set_fan_speed', 'samsung_fan_speed', 'fan');
     setter('set_swing', 'samsung_swing', 'swing');
     setter('set_preset', 'samsung_preset', 'preset');
+    flow.getActionCard('set_auto_clean').registerRunListener(({ device, state }) => {
+      if (!device.hasCapability('samsung_auto_clean')) throw new Error(this.homey.__('device.not_supported'));
+      return device.triggerCapabilityListener('samsung_auto_clean', state === 'on');
+    });
     flow.getActionCard('reset_filter').registerRunListener(({ device }) => device.resetFilter());
 
     flow.getConditionCard('mode_is').registerRunListener(({ device, mode }) => (
       device.getCapabilityValue('samsung_hvac_mode') === mode));
     flow.getConditionCard('preset_is').registerRunListener(({ device, preset }) => (
       device.getCapabilityValue('samsung_preset') === preset));
+
+    // Conditions on a capability the unit may lack: an error instead of a silent "false".
+    const is = (card, cap, test) => flow.getConditionCard(card).registerRunListener((args) => {
+      if (!args.device.hasCapability(cap)) throw new Error(this.homey.__('device.not_supported'));
+      return test(args.device.getCapabilityValue(cap), args);
+    });
+    is('fan_speed_is', 'samsung_fan_speed', (value, { fan }) => value === fan);
+    is('swing_is', 'samsung_swing', (value, { swing }) => value === swing);
+    is('target_temperature_is', 'target_temperature', (value, { comparison, temperature }) => (
+      compareTemperature(value, comparison, temperature)));
+    is('filter_needs_cleaning', 'alarm_generic.filter', (value) => value === true);
+    is('auto_clean_is', 'samsung_auto_clean', (value) => value === true);
   }
 
   triggerModeChanged(device, mode) {
@@ -35,6 +59,20 @@ class IndoorUnitDriver extends Homey.Driver {
 
   triggerPresetChanged(device, preset) {
     this.presetChanged.trigger(device, { preset: this.homey.__(`flow.preset.${preset}`) }).catch(this.error);
+  }
+
+  triggerFanChanged(device, fan) {
+    this.fanChanged.trigger(device, { fan_speed: this.homey.__(`flow.fan.${fan}`) }).catch(this.error);
+  }
+
+  triggerSwingChanged(device, swing) {
+    this.swingChanged.trigger(device, { swing: this.homey.__(`flow.swing.${swing}`) }).catch(this.error);
+  }
+
+  /** kind: filter_alarm | auto_clean */
+  triggerSwitch(device, kind, on) {
+    const card = this.switchCards[`${kind}_${on ? 'on' : 'off'}`];
+    if (card) card.trigger(device).catch(this.error);
   }
 
   /**

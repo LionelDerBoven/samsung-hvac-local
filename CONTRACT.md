@@ -64,6 +64,8 @@ Each bridge only advertises what the owner enabled, through the `cap_*` substitu
 Behaviour of the unit itself, so clients can explain it:
 - WindFree only works in COOL or DRY.
 - Quiet and Fast depend on the mode.
+- Good Sleep in the Samsung app is the `SLEEP` preset. With WindFree and Good Sleep both on, the unit reports
+  `WindFree` only: there is no separate WindFree Sleep preset on the bus.
 
 ### Outdoor unit
 

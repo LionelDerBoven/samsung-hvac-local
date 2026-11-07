@@ -48,6 +48,91 @@
           "example": "WindFree"
         }
       ]
+    },
+    {
+      "id": "fan_speed_changed",
+      "title": {
+        "en": "The fan speed changed",
+        "nl": "De ventilatorsnelheid veranderde",
+        "fr": "La vitesse du ventilateur a changé"
+      },
+      "tokens": [
+        {
+          "name": "fan_speed",
+          "type": "string",
+          "title": {
+            "en": "Fan speed",
+            "nl": "Ventilatorsnelheid",
+            "fr": "Vitesse du ventilateur"
+          },
+          "example": {
+            "en": "Auto",
+            "nl": "Auto",
+            "fr": "Auto"
+          }
+        }
+      ]
+    },
+    {
+      "id": "swing_changed",
+      "title": {
+        "en": "The air direction changed",
+        "nl": "De windrichting veranderde",
+        "fr": "La direction de l'air a changé"
+      },
+      "tokens": [
+        {
+          "name": "swing",
+          "type": "string",
+          "title": {
+            "en": "Air direction",
+            "nl": "Windrichting",
+            "fr": "Direction de l'air"
+          },
+          "example": {
+            "en": "Fixed",
+            "nl": "Vast",
+            "fr": "Fixe"
+          }
+        }
+      ]
+    },
+    {
+      "id": "filter_alarm_on",
+      "title": {
+        "en": "The filter needs cleaning",
+        "nl": "De filter moet gereinigd worden",
+        "fr": "Le filtre doit être nettoyé"
+      }
+    },
+    {
+      "id": "filter_alarm_off",
+      "title": {
+        "en": "The filter no longer needs cleaning",
+        "nl": "De filter hoeft niet meer gereinigd te worden",
+        "fr": "Le filtre n'a plus besoin d'être nettoyé"
+      },
+      "hint": {
+        "en": "For example after resetting the filter counter.",
+        "nl": "Bijvoorbeeld na het resetten van de filterteller.",
+        "fr": "Par exemple après la réinitialisation du compteur du filtre."
+      }
+    },
+    {
+      "id": "auto_clean_on",
+      "title": {
+        "en": "Auto clean turned on",
+        "nl": "Automatische reiniging ging aan",
+        "fr": "Le nettoyage automatique s'est activé"
+      }
+    },
+    {
+      "id": "auto_clean_off",
+      "title": {
+        "en": "Auto clean turned off",
+        "nl": "Automatische reiniging ging uit",
+        "fr": "Le nettoyage automatique s'est désactivé"
+      }
     }
   ],
   "conditions": [
@@ -64,15 +149,23 @@
         "fr": "Le mode !{{est|n'est pas}} [[mode]]"
       },
       "hint": {
-        "en": "False while the air conditioner is off.",
-        "nl": "Onwaar zolang de airco uit staat.",
-        "fr": "Faux tant que le climatiseur est éteint."
+        "en": "Is Off while the air conditioner is switched off.",
+        "nl": "Is Uit zolang de airco uit staat.",
+        "fr": "Vaut Arrêt tant que le climatiseur est éteint."
       },
       "args": [
         {
           "type": "dropdown",
           "name": "mode",
           "values": [
+            {
+              "id": "off",
+              "label": {
+                "en": "Off",
+                "nl": "Uit",
+                "fr": "Arrêt"
+              }
+            },
             {
               "id": "cool",
               "label": {
@@ -193,6 +286,198 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fan_speed_is",
+      "title": {
+        "en": "Fan speed is !{{|not}} …",
+        "nl": "Ventilatorsnelheid is !{{|niet}} …",
+        "fr": "La vitesse du ventilateur !{{est|n'est pas}} …"
+      },
+      "titleFormatted": {
+        "en": "Fan speed is !{{|not}} [[fan]]",
+        "nl": "Ventilatorsnelheid is !{{|niet}} [[fan]]",
+        "fr": "La vitesse du ventilateur !{{est|n'est pas}} [[fan]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "fan",
+          "values": [
+            {
+              "id": "auto",
+              "label": {
+                "en": "Auto",
+                "nl": "Auto",
+                "fr": "Auto"
+              }
+            },
+            {
+              "id": "low",
+              "label": {
+                "en": "Low",
+                "nl": "Laag",
+                "fr": "Basse"
+              }
+            },
+            {
+              "id": "medium",
+              "label": {
+                "en": "Medium",
+                "nl": "Midden",
+                "fr": "Moyenne"
+              }
+            },
+            {
+              "id": "high",
+              "label": {
+                "en": "High",
+                "nl": "Hoog",
+                "fr": "Haute"
+              }
+            },
+            {
+              "id": "turbo",
+              "label": {
+                "en": "Turbo",
+                "nl": "Turbo",
+                "fr": "Turbo"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "swing_is",
+      "title": {
+        "en": "Air direction is !{{|not}} …",
+        "nl": "Windrichting is !{{|niet}} …",
+        "fr": "La direction de l'air !{{est|n'est pas}} …"
+      },
+      "titleFormatted": {
+        "en": "Air direction is !{{|not}} [[swing]]",
+        "nl": "Windrichting is !{{|niet}} [[swing]]",
+        "fr": "La direction de l'air !{{est|n'est pas}} [[swing]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "swing",
+          "values": [
+            {
+              "id": "off",
+              "label": {
+                "en": "Fixed",
+                "nl": "Vast",
+                "fr": "Fixe"
+              }
+            },
+            {
+              "id": "vertical",
+              "label": {
+                "en": "Vertical swing",
+                "nl": "Verticaal zwaaien",
+                "fr": "Oscillation verticale"
+              }
+            },
+            {
+              "id": "horizontal",
+              "label": {
+                "en": "Horizontal swing",
+                "nl": "Horizontaal zwaaien",
+                "fr": "Oscillation horizontale"
+              }
+            },
+            {
+              "id": "both",
+              "label": {
+                "en": "Both directions",
+                "nl": "Beide richtingen",
+                "fr": "Les deux directions"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "target_temperature_is",
+      "title": {
+        "en": "Set temperature is !{{|not}} …",
+        "nl": "Ingestelde temperatuur is !{{|niet}} …",
+        "fr": "La température de consigne !{{est|n'est pas}} …"
+      },
+      "titleFormatted": {
+        "en": "Set temperature is !{{|not}} [[comparison]] [[temperature]] °C",
+        "nl": "Ingestelde temperatuur is !{{|niet}} [[comparison]] [[temperature]] °C",
+        "fr": "La température de consigne !{{est|n'est pas}} [[comparison]] [[temperature]] °C"
+      },
+      "hint": {
+        "en": "Invert the card for at most, at least or not equal to.",
+        "nl": "Keer de kaart om voor hoogstens, minstens of niet gelijk aan.",
+        "fr": "Inversez la carte pour au plus, au moins ou différente de."
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "comparison",
+          "values": [
+            {
+              "id": "equal",
+              "label": {
+                "en": "equal to",
+                "nl": "gelijk aan",
+                "fr": "égale à"
+              }
+            },
+            {
+              "id": "above",
+              "label": {
+                "en": "above",
+                "nl": "hoger dan",
+                "fr": "supérieure à"
+              }
+            },
+            {
+              "id": "below",
+              "label": {
+                "en": "below",
+                "nl": "lager dan",
+                "fr": "inférieure à"
+              }
+            }
+          ]
+        },
+        {
+          "type": "number",
+          "name": "temperature",
+          "min": 16,
+          "max": 30,
+          "step": 0.5,
+          "placeholder": {
+            "en": "°C",
+            "nl": "°C",
+            "fr": "°C"
+          }
+        }
+      ]
+    },
+    {
+      "id": "filter_needs_cleaning",
+      "title": {
+        "en": "The filter !{{needs|does not need}} cleaning",
+        "nl": "De filter moet !{{|niet}} gereinigd worden",
+        "fr": "Le filtre !{{doit|ne doit pas}} être nettoyé"
+      }
+    },
+    {
+      "id": "auto_clean_is",
+      "title": {
+        "en": "Auto clean is !{{on|off}}",
+        "nl": "Automatische reiniging staat !{{aan|uit}}",
+        "fr": "Le nettoyage automatique est !{{activé|désactivé}}"
+      }
     }
   ],
   "actions": [
@@ -209,15 +494,23 @@
         "fr": "Régler le mode sur [[mode]]"
       },
       "hint": {
-        "en": "Also switches the air conditioner on.",
-        "nl": "Zet de airco ook aan.",
-        "fr": "Allume aussi le climatiseur."
+        "en": "Any mode except Off also switches the air conditioner on.",
+        "nl": "Elke modus behalve Uit zet de airco ook aan.",
+        "fr": "Tout mode sauf Arrêt allume aussi le climatiseur."
       },
       "args": [
         {
           "type": "dropdown",
           "name": "mode",
           "values": [
+            {
+              "id": "off",
+              "label": {
+                "en": "Off",
+                "nl": "Uit",
+                "fr": "Arrêt"
+              }
+            },
             {
               "id": "cool",
               "label": {
@@ -452,6 +745,43 @@
                 "en": "Long reach",
                 "nl": "Lange reikwijdte",
                 "fr": "Longue portée"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set_auto_clean",
+      "title": {
+        "en": "Switch auto clean on or off",
+        "nl": "Zet automatische reiniging aan of uit",
+        "fr": "Activer ou désactiver le nettoyage automatique"
+      },
+      "titleFormatted": {
+        "en": "Switch auto clean [[state]]",
+        "nl": "Zet automatische reiniging [[state]]",
+        "fr": "Régler le nettoyage automatique sur [[state]]"
+      },
+      "args": [
+        {
+          "type": "dropdown",
+          "name": "state",
+          "values": [
+            {
+              "id": "on",
+              "label": {
+                "en": "on",
+                "nl": "aan",
+                "fr": "activé"
+              }
+            },
+            {
+              "id": "off",
+              "label": {
+                "en": "off",
+                "nl": "uit",
+                "fr": "désactivé"
               }
             }
           ]

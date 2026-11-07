@@ -47,6 +47,19 @@
       "eco": "Éco",
       "sleep": "Sommeil",
       "longreach": "Longue portée"
+    },
+    "fan": {
+      "auto": "Auto",
+      "low": "Basse",
+      "medium": "Moyenne",
+      "high": "Haute",
+      "turbo": "Turbo"
+    },
+    "swing": {
+      "off": "Fixe",
+      "vertical": "Oscillation verticale",
+      "horizontal": "Oscillation horizontale",
+      "both": "Les deux directions"
     }
   }
 }
