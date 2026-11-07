@@ -269,6 +269,7 @@ class IndoorUnitDevice extends Homey.Device {
     try {
       fn();
     } catch (err) {
+      this.error('command failed:', err.message);
       throw new Error(this.homey.__('device.offline'));
     }
   }

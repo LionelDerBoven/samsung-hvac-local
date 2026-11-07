@@ -131,10 +131,16 @@ const command = {
     const supported = (FAN[v] || []).find((n) => !entity || entity.fanModes.includes(n));
     return supported === undefined ? null : { fanMode: supported };
   },
-  swing: (v) => (v in SWING ? { swingMode: SWING[v] } : null),
-  preset: (v) => {
-    if (PRESET_CUSTOM[v]) return { customPreset: PRESET_CUSTOM[v] };
-    return v in PRESET ? { preset: PRESET[v] } : null;
+  swing: (v, entity) => {
+    if (!(v in SWING) || (entity && v !== 'off' && !entity.swingModes.includes(SWING[v]))) return null;
+    return { swingMode: SWING[v] };
+  },
+  preset: (v, entity) => {
+    if (PRESET_CUSTOM[v]) {
+      return entity && !entity.customPresets.includes(PRESET_CUSTOM[v]) ? null : { customPreset: PRESET_CUSTOM[v] };
+    }
+    if (!(v in PRESET) || (entity && v !== 'none' && !entity.presets.includes(PRESET[v]))) return null;
+    return { preset: PRESET[v] };
   },
 };
 

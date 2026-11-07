@@ -13,7 +13,10 @@ class IndoorUnitDriver extends Homey.Driver {
 
     // Actions run the device's own capability listeners, so Flows behave like the device view.
     const setter = (card, cap, arg) => flow.getActionCard(card)
-      .registerRunListener((args) => args.device.triggerCapabilityListener(cap, args[arg]));
+      .registerRunListener((args) => {
+        if (!args.device.hasCapability(cap)) throw new Error(this.homey.__('device.not_supported'));
+        return args.device.triggerCapabilityListener(cap, args[arg]);
+      });
     setter('set_mode', 'samsung_hvac_mode', 'mode');
     setter('set_fan_speed', 'samsung_fan_speed', 'fan');
     setter('set_swing', 'samsung_swing', 'swing');

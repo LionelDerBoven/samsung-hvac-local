@@ -112,8 +112,9 @@ class Bridge extends EventEmitter {
   }
 
   setOnline(online, err) {
+    const same = this.online === online && (online || (this.lastError && this.lastError.code) === (err && err.code));
     this.lastError = err || null;
-    if (this.online === online && online) return;
+    if (same) return; // no repeat of the same offline reason on every retry
     this.online = online;
     this.emit('status', online, err);
   }

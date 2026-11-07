@@ -334,8 +334,9 @@ class Connection extends EventEmitter {
     if (this.socket) {
       this.socket.removeAllListeners('data');
       this.socket.on('error', () => {}); // late errors after teardown
-      this.socket.end();
-      this.socket.destroy();
+      const { socket } = this;
+      socket.end(); // flushes a pending disconnect request
+      setTimeout(() => socket.destroy(), 1000).unref();
       this.socket = null;
     }
     this.buffer = Buffer.alloc(0);
