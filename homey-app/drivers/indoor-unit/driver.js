@@ -37,14 +37,13 @@ class IndoorUnitDriver extends Homey.Driver {
 
     flow.getConditionCard('mode_is').registerRunListener(({ device, mode }) => (
       device.getCapabilityValue('samsung_hvac_mode') === mode));
-    flow.getConditionCard('preset_is').registerRunListener(({ device, preset }) => (
-      device.getCapabilityValue('samsung_preset') === preset));
 
     // Conditions on a capability the unit may lack: an error instead of a silent "false".
     const is = (card, cap, test) => flow.getConditionCard(card).registerRunListener((args) => {
       if (!args.device.hasCapability(cap)) throw new Error(this.homey.__('device.not_supported'));
       return test(args.device.getCapabilityValue(cap), args);
     });
+    is('preset_is', 'samsung_preset', (value, { preset }) => value === preset);
     is('fan_speed_is', 'samsung_fan_speed', (value, { fan }) => value === fan);
     is('swing_is', 'samsung_swing', (value, { swing }) => value === swing);
     is('target_temperature_is', 'target_temperature', (value, { comparison, temperature }) => (

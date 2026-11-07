@@ -10,9 +10,15 @@ const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsu
 // Order of the pickers. Homey's app opens the picker tab on the last one, so the mode comes last.
 const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
 // Bump when capability options in the manifest change: affected capabilities are re-added once.
-const CAPS_REVISION = 4;
-// rev 3: filter reset back to a maintenance action; rev 4: own insights titles for the filter alarm
-const REVISED_CAPS = ['button.filter_reset', 'alarm_generic.filter'];
+// Capability options in the manifest that changed after devices were paired. Homey does not apply them to existing
+// devices, so each revision is applied once: `readd` removes and re-adds (history lost), `options` re-applies the
+// manifest options in place (history kept). The device stores the last revision it applied.
+const REVISIONS = [
+  { rev: 3, readd: ['button.filter_reset'] }, // filter reset back to a maintenance action
+  { rev: 4, readd: ['alarm_generic.filter'] }, // own insights titles for the filter alarm
+  { rev: 5, options: ['measure_power', 'meter_power'] }, // titles without parentheses
+];
+const CAPS_REVISION = REVISIONS[REVISIONS.length - 1].rev;
 // Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
@@ -123,11 +129,17 @@ class IndoorUnitDevice extends Homey.Device {
       if (!want.has(cap) && this.hasCapability(cap)) await this.removeCapability(cap).catch(this.error);
     }
     await this.orderPickers();
-    if ((this.getStoreValue('capsRevision') || 1) < CAPS_REVISION) {
-      for (const cap of REVISED_CAPS) {
-        if (!this.hasCapability(cap)) continue;
-        await this.removeCapability(cap).catch(this.error);
-        await this.addCapability(cap).catch(this.error);
+    const applied = this.getStoreValue('capsRevision') || 1;
+    if (applied < CAPS_REVISION) {
+      for (const { rev, readd = [], options = [] } of REVISIONS) {
+        if (rev <= applied) continue;
+        for (const cap of readd.filter((c) => this.hasCapability(c))) {
+          await this.removeCapability(cap).catch(this.error);
+          await this.addCapability(cap).catch(this.error);
+        }
+        for (const cap of options.filter((c) => this.hasCapability(c))) {
+          await this.setCapabilityOptions(cap, this.driver.manifest.capabilitiesOptions[cap]).catch(this.error);
+        }
       }
       await this.setStoreValue('capsRevision', CAPS_REVISION).catch(this.error);
     }

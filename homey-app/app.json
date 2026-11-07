@@ -1023,16 +1023,16 @@
         },
         "measure_power": {
           "title": {
-            "en": "Power (outdoor unit)",
-            "nl": "Vermogen (buitenunit)",
-            "fr": "Puissance (unité extérieure)"
+            "en": "Outdoor unit power",
+            "nl": "Vermogen buitenunit",
+            "fr": "Puissance unité extérieure"
           }
         },
         "meter_power": {
           "title": {
-            "en": "Energy (outdoor unit)",
-            "nl": "Energie (buitenunit)",
-            "fr": "Énergie (unité extérieure)"
+            "en": "Outdoor unit energy",
+            "nl": "Energie buitenunit",
+            "fr": "Énergie unité extérieure"
           }
         },
         "alarm_generic.filter": {
