@@ -1,4 +1,9 @@
 {
+  "0.1.1": {
+    "en": "The store text now names the bridge hardware you need. Small fixes.",
+    "nl": "De winkeltekst vermeldt nu welke bridge-hardware je nodig hebt. Kleine verbeteringen.",
+    "fr": "Le texte de la boutique indique maintenant le matériel de bridge nécessaire. Petites corrections."
+  },
   "0.1.0": {
     "en": "First version: one device per indoor unit with control, measurements and energy.",
     "nl": "Eerste versie: één apparaat per binnenunit met bediening, metingen en energie.",

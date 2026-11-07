@@ -1,6 +1,6 @@
 {
   "id": "com.samsunghvaclocal.community",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "runtime": "nodejs",
