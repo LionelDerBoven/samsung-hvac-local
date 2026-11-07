@@ -10,8 +10,9 @@ const CLIMATE_CAPS = ['onoff', 'target_temperature', 'samsung_hvac_mode', 'samsu
 // Order of the pickers. Homey's app opens the picker tab on the last one, so the mode comes last.
 const PICKERS = ['samsung_fan_speed', 'samsung_swing', 'samsung_preset', 'samsung_hvac_mode'];
 // Bump when capability options in the manifest change: affected capabilities are re-added once.
-const CAPS_REVISION = 3;
-const REVISED_CAPS = ['button.filter_reset']; // rev 3: filter reset back to a maintenance action
+const CAPS_REVISION = 4;
+// rev 3: filter reset back to a maintenance action; rev 4: own insights titles for the filter alarm
+const REVISED_CAPS = ['button.filter_reset', 'alarm_generic.filter'];
 // Capabilities that depend on what the bridge offers (added or removed in syncCapabilities).
 const OPTIONAL = [
   'measure_humidity', 'measure_temperature.outdoor', 'measure_power', 'meter_power',
@@ -132,6 +133,35 @@ class IndoorUnitDevice extends Homey.Device {
     }
 
     await this.applyTemperatureStep();
+    await this.applyPickerValues().catch(this.error); // cosmetic: never blocks availability
+  }
+
+  /** Pickers show only what this bridge offers (e.g. no Long reach when the owner disabled it). */
+  async applyPickerValues() {
+    const supported = {
+      samsung_hvac_mode: ['off', ...this.traits.modes],
+      samsung_fan_speed: this.traits.fans,
+      samsung_swing: this.traits.swings,
+      samsung_preset: this.traits.presets,
+    };
+    for (const [cap, ids] of Object.entries(supported)) {
+      if (!this.hasCapability(cap)) continue;
+      const all = this.homey.manifest.capabilities[cap].values;
+      const values = all.filter((v) => ids.includes(v.id));
+      const current = this.optionValues(cap);
+      const same = (list) => list && list.map((v) => v.id).join() === values.map((v) => v.id).join();
+      if (same(current) || (!current && values.length === all.length) || !values.length) continue;
+      await this.setCapabilityOptions(cap, { values }).catch(this.error);
+    }
+  }
+
+  /** The values option of an enum capability; getCapabilityOptions throws while no options were ever set. */
+  optionValues(cap) {
+    try {
+      return (this.getCapabilityOptions(cap) || {}).values;
+    } catch (err) {
+      return undefined;
+    }
   }
 
   /** Temperature range and step as configured on the bridge (target_step: 1 or 0.5 °C). */

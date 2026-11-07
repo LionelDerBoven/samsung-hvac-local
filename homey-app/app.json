@@ -1040,6 +1040,16 @@
             "en": "Clean the filter",
             "nl": "Filter reinigen",
             "fr": "Nettoyer le filtre"
+          },
+          "insightsTitleTrue": {
+            "en": "Filter needs cleaning",
+            "nl": "Filter moet gereinigd worden",
+            "fr": "Filtre à nettoyer"
+          },
+          "insightsTitleFalse": {
+            "en": "Filter is clean",
+            "nl": "Filter is in orde",
+            "fr": "Filtre propre"
           }
         },
         "button.filter_reset": {

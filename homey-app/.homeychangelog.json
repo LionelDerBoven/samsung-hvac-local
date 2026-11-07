@@ -1,8 +1,8 @@
 {
   "0.1.2": {
-    "en": "More Flow cards: conditions for fan speed, air direction and set temperature, triggers when they change, Off as a mode, and clear cards for auto clean, the filter and faults. Flows that used the old auto clean or fault cards need to be set up again.",
-    "nl": "Meer Flow-kaarten: condities voor ventilatorsnelheid, windrichting en ingestelde temperatuur, triggers bij wijzigingen, Uit als modus, en duidelijke kaarten voor automatische reiniging, de filter en storingen. Flows met de oude kaarten voor automatische reiniging of storing moet je opnieuw instellen.",
-    "fr": "Plus de cartes Flow : conditions pour la vitesse du ventilateur, la direction de l'air et la température de consigne, déclencheurs lors des changements, Arrêt comme mode, et des cartes claires pour le nettoyage automatique, le filtre et les pannes. Les Flows qui utilisaient les anciennes cartes de nettoyage automatique ou de panne doivent être reconfigurés."
+    "en": "More Flow cards: conditions for fan speed, air direction and set temperature, triggers when they change, Off as a mode, and clear cards for auto clean, the filter and faults. The pickers only show what your air conditioner supports. Flows that used the old auto clean or fault cards need to be set up again.",
+    "nl": "Meer Flow-kaarten: condities voor ventilatorsnelheid, windrichting en ingestelde temperatuur, triggers bij wijzigingen, Uit als modus, en duidelijke kaarten voor automatische reiniging, de filter en storingen. De keuzelijsten tonen enkel wat je airco ondersteunt. Flows met de oude kaarten voor automatische reiniging of storing moet je opnieuw instellen.",
+    "fr": "Plus de cartes Flow : conditions pour la vitesse du ventilateur, la direction de l'air et la température de consigne, déclencheurs lors des changements, Arrêt comme mode, et des cartes claires pour le nettoyage automatique, le filtre et les pannes. Les listes de choix n'affichent que ce que votre climatiseur prend en charge. Les Flows qui utilisaient les anciennes cartes de nettoyage automatique ou de panne doivent être reconfigurés."
   },
   "0.1.1": {
     "en": "The store text now names the bridge hardware you need. Small fixes.",

@@ -112,7 +112,7 @@ const t = (k, vars) => {
 };
 
 // Values sent to the bridge; labels come from I18N.
-const MODES = [['cool', '❄'], ['dry', '💧'], ['fan_only', '🌀'], ['auto', 'A'], ['heat', '☀']];
+const MODES = [['cool', '❄'], ['heat', '☀'], ['dry', '💧'], ['fan_only', '🌀'], ['auto', 'A']];
 const FANS = ['AUTO', 'LOW', 'MIDDLE', 'HIGH', 'Turbo'];
 const PRESETS = ['NONE', 'WindFree', 'Quiet', 'Fast', 'ECO', 'SLEEP', 'LongReach'];
 const SWINGS = ['OFF', 'VERTICAL', 'HORIZONTAL', 'BOTH'];
@@ -385,6 +385,8 @@ function buildMaint() {
 
 // ---------- rendering ----------
 const setChips = (k, val) => document.querySelectorAll(`[data-k="${k}"] .chip`).forEach(b => b.classList.toggle('on', val != null && b.dataset.v.toUpperCase() === String(val).toUpperCase()));
+// Hide the chips the bridge does not offer (climate traits; sent with the first state event).
+const showSupported = (k, list) => { if (!Array.isArray(list)) return; const ok = new Set(list.map(x => String(x).toUpperCase())); document.querySelectorAll(`[data-k="${k}"] .chip`).forEach(b => { b.hidden = !ok.has(b.dataset.v.toUpperCase()); }); };
 const txt = (sel, v) => { const el = $(sel); if (el) el.textContent = v; };
 const badge = (cls, text) => `<span class="badge ${cls}">${text}</span>`;
 
@@ -405,6 +407,10 @@ function render() {
       + (pl && String(pre).toUpperCase() !== 'NONE' ? ' · ' + pl : ''));
     setChips('mode', on ? c.mode : null);
     setChips('fan', fan); setChips('preset', pre || 'NONE'); setChips('swing', c.swing_mode);
+    showSupported('mode', c.modes);
+    showSupported('fan', c.fan_modes && [...c.fan_modes, ...(c.custom_fan_modes || [])]);
+    showSupported('preset', c.presets && [...c.presets, ...(c.custom_presets || [])]);
+    showSupported('swing', c.swing_modes);
     const wf = on && /^(COOL|DRY)$/.test(c.mode);
     const wfb = $('[data-k="preset"] [data-v="WindFree"]'); if (wfb) wfb.disabled = !wf && pre !== 'WindFree';
   }

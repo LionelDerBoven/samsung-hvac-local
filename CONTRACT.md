@@ -64,8 +64,10 @@ Each bridge only advertises what the owner enabled, through the `cap_*` substitu
 Behaviour of the unit itself, so clients can explain it:
 - WindFree only works in COOL or DRY.
 - Quiet and Fast depend on the mode.
-- Good Sleep in the Samsung app is the `SLEEP` preset. With WindFree and Good Sleep both on, the unit reports
-  `WindFree` only: there is no separate WindFree Sleep preset on the bus.
+- Good Sleep in the Samsung app is the `SLEEP` preset. With WindFree on, Good Sleep is not a preset on the bus: the
+  unit keeps `WindFree` and only lowers its own working target (NASA 0x4202, e.g. 24.0 → 23.0 °C) while the set
+  temperature stays the same. The Samsung Wi-Fi module sends that command over the display cable, not over F1/F2, so
+  a bridge cannot switch WindFree and Sleep on together; the bus has one preset value at a time.
 
 ### Outdoor unit
 
