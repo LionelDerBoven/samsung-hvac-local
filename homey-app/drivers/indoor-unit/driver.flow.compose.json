@@ -404,13 +404,13 @@
     {
       "id": "target_temperature_is",
       "title": {
-        "en": "Set temperature is !{{|not}} …",
-        "nl": "Ingestelde temperatuur is !{{|niet}} …",
+        "en": "Target temperature is !{{|not}} …",
+        "nl": "Doeltemperatuur is !{{|niet}} …",
         "fr": "La température de consigne !{{est|n'est pas}} …"
       },
       "titleFormatted": {
-        "en": "Set temperature is !{{|not}} [[comparison]] [[temperature]] °C",
-        "nl": "Ingestelde temperatuur is !{{|niet}} [[comparison]] [[temperature]] °C",
+        "en": "Target temperature is !{{|not}} [[comparison]] [[temperature]] °C",
+        "nl": "Doeltemperatuur is !{{|niet}} [[comparison]] [[temperature]] °C",
         "fr": "La température de consigne !{{est|n'est pas}} [[comparison]] [[temperature]] °C"
       },
       "hint": {
