@@ -1,4 +1,9 @@
 {
+  "0.2.0": {
+    "en": "New Flow card to set the air conditioner in one go: mode, temperature, fan speed, air direction and special mode. Fields you leave empty or on Unchanged stay as they are.",
+    "nl": "Nieuwe Flow-kaart om de airco in één keer in te stellen: modus, temperatuur, ventilatorsnelheid, windrichting en speciale modus. Velden die je leeg laat of op Ongewijzigd zet, blijven zoals ze zijn.",
+    "fr": "Nouvelle carte Flow pour régler le climatiseur en une fois : mode, température, vitesse du ventilateur, direction de l'air et mode spécial. Les champs laissés vides ou sur Inchangé restent tels quels."
+  },
   "0.1.4": {
     "en": "More Flow cards: conditions for fan speed, air direction and target temperature, triggers when they change, Off as a mode, and clear cards for auto clean, the filter and faults. The pickers only show what your air conditioner supports. Flows that used the old auto clean or fault cards need to be set up again.",
     "nl": "Meer Flow-kaarten: condities voor ventilatorsnelheid, windrichting en doeltemperatuur, triggers bij wijzigingen, Uit als modus, en duidelijke kaarten voor automatische reiniging, de filter en storingen. De keuzelijsten tonen enkel wat je airco ondersteunt. Flows met de oude kaarten voor automatische reiniging of storing moet je opnieuw instellen.",

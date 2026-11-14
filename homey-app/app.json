@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "com.samsunghvaclocal.community",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "compatibility": ">=12.4.0",
   "sdk": 3,
   "runtime": "nodejs",
@@ -845,6 +845,293 @@
             "type": "dropdown",
             "name": "preset",
             "values": [
+              {
+                "id": "none",
+                "label": {
+                  "en": "None",
+                  "nl": "Geen",
+                  "fr": "Aucun"
+                }
+              },
+              {
+                "id": "windfree",
+                "label": {
+                  "en": "WindFree",
+                  "nl": "WindFree",
+                  "fr": "WindFree"
+                }
+              },
+              {
+                "id": "quiet",
+                "label": {
+                  "en": "Quiet",
+                  "nl": "Stil",
+                  "fr": "Silencieux"
+                }
+              },
+              {
+                "id": "fast",
+                "label": {
+                  "en": "Fast",
+                  "nl": "Snel",
+                  "fr": "Rapide"
+                }
+              },
+              {
+                "id": "eco",
+                "label": {
+                  "en": "Eco",
+                  "nl": "Eco",
+                  "fr": "Éco"
+                }
+              },
+              {
+                "id": "sleep",
+                "label": {
+                  "en": "Sleep",
+                  "nl": "Slapen",
+                  "fr": "Sommeil"
+                }
+              },
+              {
+                "id": "longreach",
+                "label": {
+                  "en": "Long reach",
+                  "nl": "Lange reikwijdte",
+                  "fr": "Longue portée"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "set_climate",
+        "title": {
+          "en": "Set the air conditioner",
+          "nl": "Stel de airco in",
+          "fr": "Régler le climatiseur"
+        },
+        "titleFormatted": {
+          "en": "Set the air conditioner to [[mode]], [[temperature]] °C, fan speed [[fan]], air direction [[swing]], special mode [[preset]]",
+          "nl": "Zet de airco op [[mode]], [[temperature]] °C, ventilator [[fan]], windrichting [[swing]], speciale modus [[preset]]",
+          "fr": "Régler le climatiseur sur [[mode]], [[temperature]] °C, vitesse du ventilateur [[fan]], direction de l'air [[swing]], mode spécial [[preset]]"
+        },
+        "hint": {
+          "en": "An empty field or Unchanged leaves that setting as it is. With Off the other fields are ignored.",
+          "nl": "Een leeg veld of Ongewijzigd laat die instelling zoals ze is. Bij Uit worden de andere velden genegeerd.",
+          "fr": "Un champ vide ou Inchangé laisse ce réglage tel quel. Avec Arrêt, les autres champs sont ignorés."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=indoor-unit"
+          },
+          {
+            "type": "dropdown",
+            "name": "mode",
+            "title": {
+              "en": "Mode",
+              "nl": "Modus",
+              "fr": "Mode"
+            },
+            "values": [
+              {
+                "id": "off",
+                "label": {
+                  "en": "Off",
+                  "nl": "Uit",
+                  "fr": "Arrêt"
+                }
+              },
+              {
+                "id": "cool",
+                "label": {
+                  "en": "Cool",
+                  "nl": "Koelen",
+                  "fr": "Refroidir"
+                }
+              },
+              {
+                "id": "heat",
+                "label": {
+                  "en": "Heat",
+                  "nl": "Verwarmen",
+                  "fr": "Chauffer"
+                }
+              },
+              {
+                "id": "dry",
+                "label": {
+                  "en": "Dry",
+                  "nl": "Drogen",
+                  "fr": "Déshumidifier"
+                }
+              },
+              {
+                "id": "fan",
+                "label": {
+                  "en": "Fan",
+                  "nl": "Ventileren",
+                  "fr": "Ventiler"
+                }
+              },
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "fr": "Auto"
+                }
+              }
+            ]
+          },
+          {
+            "type": "number",
+            "name": "temperature",
+            "required": false,
+            "title": {
+              "en": "Temperature",
+              "nl": "Temperatuur",
+              "fr": "Température"
+            },
+            "placeholder": {
+              "en": "Unchanged",
+              "nl": "Ongewijzigd",
+              "fr": "Inchangé"
+            },
+            "min": 16,
+            "max": 30,
+            "step": 0.5
+          },
+          {
+            "type": "dropdown",
+            "name": "fan",
+            "title": {
+              "en": "Fan speed",
+              "nl": "Ventilatorsnelheid",
+              "fr": "Vitesse du ventilateur"
+            },
+            "values": [
+              {
+                "id": "keep",
+                "label": {
+                  "en": "Unchanged",
+                  "nl": "Ongewijzigd",
+                  "fr": "Inchangé"
+                }
+              },
+              {
+                "id": "auto",
+                "label": {
+                  "en": "Auto",
+                  "nl": "Auto",
+                  "fr": "Auto"
+                }
+              },
+              {
+                "id": "low",
+                "label": {
+                  "en": "Low",
+                  "nl": "Laag",
+                  "fr": "Basse"
+                }
+              },
+              {
+                "id": "medium",
+                "label": {
+                  "en": "Medium",
+                  "nl": "Midden",
+                  "fr": "Moyenne"
+                }
+              },
+              {
+                "id": "high",
+                "label": {
+                  "en": "High",
+                  "nl": "Hoog",
+                  "fr": "Haute"
+                }
+              },
+              {
+                "id": "turbo",
+                "label": {
+                  "en": "Turbo",
+                  "nl": "Turbo",
+                  "fr": "Turbo"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "swing",
+            "title": {
+              "en": "Air direction",
+              "nl": "Windrichting",
+              "fr": "Direction de l'air"
+            },
+            "values": [
+              {
+                "id": "keep",
+                "label": {
+                  "en": "Unchanged",
+                  "nl": "Ongewijzigd",
+                  "fr": "Inchangé"
+                }
+              },
+              {
+                "id": "off",
+                "label": {
+                  "en": "Fixed",
+                  "nl": "Vast",
+                  "fr": "Fixe"
+                }
+              },
+              {
+                "id": "vertical",
+                "label": {
+                  "en": "Vertical swing",
+                  "nl": "Verticaal zwaaien",
+                  "fr": "Oscillation verticale"
+                }
+              },
+              {
+                "id": "horizontal",
+                "label": {
+                  "en": "Horizontal swing",
+                  "nl": "Horizontaal zwaaien",
+                  "fr": "Oscillation horizontale"
+                }
+              },
+              {
+                "id": "both",
+                "label": {
+                  "en": "Both directions",
+                  "nl": "Beide richtingen",
+                  "fr": "Les deux directions"
+                }
+              }
+            ]
+          },
+          {
+            "type": "dropdown",
+            "name": "preset",
+            "title": {
+              "en": "Special mode",
+              "nl": "Speciale modus",
+              "fr": "Mode spécial"
+            },
+            "values": [
+              {
+                "id": "keep",
+                "label": {
+                  "en": "Unchanged",
+                  "nl": "Ongewijzigd",
+                  "fr": "Inchangé"
+                }
+              },
               {
                 "id": "none",
                 "label": {

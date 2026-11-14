@@ -156,6 +156,35 @@ function compareTemperature(value, comparison, temperature) {
   return Math.abs(diff) < TEMPERATURE_EPSILON;
 }
 
+// Modes in which the AC has no target temperature: the set_climate card leaves it out.
+const NO_TARGET_MODES = ['fan', 'dry'];
+const KEEP = 'keep';
+
+/**
+ * set_climate Flow card arguments → capability values for one climate command.
+ * Off sends only the mode; "keep", an undefined dropdown or an empty temperature leaves that setting as it is.
+ * The temperature is rounded to the unit's step and kept within its range.
+ * @returns {{ values: object, clamped: boolean }}
+ */
+function climateSettings(args, traits = {}) {
+  const values = { samsung_hvac_mode: args.mode };
+  if (args.mode === 'off') return { values, clamped: false };
+  let clamped = false;
+  const raw = args.temperature;
+  const temperature = raw === null || raw === undefined || raw === '' ? NaN : Number(raw);
+  if (Number.isFinite(temperature) && !NO_TARGET_MODES.includes(args.mode)) {
+    const { min = 16, max = 30, step = 1 } = traits;
+    const rounded = Math.round(temperature / step) * step;
+    const value = Math.min(max, Math.max(min, rounded));
+    clamped = value !== rounded;
+    values.target_temperature = Math.round(value * 100) / 100;
+  }
+  for (const [arg, cap] of [['fan', 'samsung_fan_speed'], ['swing', 'samsung_swing'], ['preset', 'samsung_preset']]) {
+    if (args[arg] !== undefined && args[arg] !== null && args[arg] !== KEEP) values[cap] = args[arg];
+  }
+  return { values, clamped };
+}
+
 function isBridge(deviceInfo) {
   return deviceInfo && deviceInfo.projectName === PROJECT_NAME;
 }
@@ -166,5 +195,15 @@ function normaliseMac(mac) {
 }
 
 module.exports = {
-  normaliseMac, PROJECT_NAME, CONTRACT_MAJOR, MODE, groupUnits, climateTraits, climateToHomey, command, isBridge, compareTemperature,
+  normaliseMac,
+  PROJECT_NAME,
+  CONTRACT_MAJOR,
+  MODE,
+  groupUnits,
+  climateTraits,
+  climateToHomey,
+  command,
+  isBridge,
+  compareTemperature,
+  climateSettings,
 };

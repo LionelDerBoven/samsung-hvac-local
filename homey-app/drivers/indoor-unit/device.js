@@ -2,7 +2,7 @@
 
 const Homey = require('homey');
 const {
-  climateTraits, climateToHomey, command,
+  climateTraits, climateToHomey, command, climateSettings,
 } = require('../../lib/contract');
 
 // Capabilities that are sent to the AC as one climate command (bundled, see onClimateChange).
@@ -312,6 +312,18 @@ class IndoorUnitDevice extends Homey.Device {
       if (!WINDFREE_MODES.includes(effective)) throw new Error(this.homey.__('device.windfree_mode'));
     }
     this.guard(() => this.bridge.climateCommand(entity, fields));
+  }
+
+  /**
+   * The set_climate Flow card: mode, temperature, fan, air direction and special mode as ONE climate command.
+   * onClimateChange silently replaces an unsupported mode, so the mode is checked here first.
+   */
+  async setClimate(args) {
+    if (!this.unit || !this.traits) throw new Error(this.homey.__('device.offline'));
+    if (args.mode !== 'off' && !this.traits.modes.includes(args.mode)) throw new Error(this.homey.__('device.not_supported'));
+    const { values, clamped } = climateSettings(args, this.traits);
+    if (clamped) this.log(`set_climate: temperature ${args.temperature} kept within ${this.traits.min}-${this.traits.max}`);
+    await this.onClimateChange(values);
   }
 
   async sendSwitch(role, value) {

@@ -29,6 +29,16 @@ class IndoorUnitDriver extends Homey.Driver {
     setter('set_fan_speed', 'samsung_fan_speed', 'fan');
     setter('set_swing', 'samsung_swing', 'swing');
     setter('set_preset', 'samsung_preset', 'preset');
+    // Everything at once: one climate command. A value other than "keep" needs its capability.
+    const optionalCaps = { fan: 'samsung_fan_speed', swing: 'samsung_swing', preset: 'samsung_preset' };
+    flow.getActionCard('set_climate').registerRunListener((args) => {
+      if (args.mode !== 'off') {
+        for (const [arg, cap] of Object.entries(optionalCaps)) {
+          if (args[arg] && args[arg] !== 'keep' && !args.device.hasCapability(cap)) throw new Error(this.homey.__('device.not_supported'));
+        }
+      }
+      return args.device.setClimate(args);
+    });
     flow.getActionCard('set_auto_clean').registerRunListener(({ device, state }) => {
       if (!device.hasCapability('samsung_auto_clean')) throw new Error(this.homey.__('device.not_supported'));
       return device.triggerCapabilityListener('samsung_auto_clean', state === 'on');

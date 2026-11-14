@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const {
-  MODE, climateToHomey, command, compareTemperature,
+  MODE, climateToHomey, command, compareTemperature, climateSettings,
 } = require('../lib/contract');
 
 const root = path.join(__dirname, '..');
@@ -57,10 +57,16 @@ test('Flow dropdowns only offer values the capabilities know', () => {
     ['actions', 'set_swing', 'swing', 'samsung_swing'],
     ['conditions', 'preset_is', 'preset', 'samsung_preset'],
     ['actions', 'set_preset', 'preset', 'samsung_preset'],
+    ['actions', 'set_climate', 'mode', 'samsung_hvac_mode'],
+    ['actions', 'set_climate', 'fan', 'samsung_fan_speed'],
+    ['actions', 'set_climate', 'swing', 'samsung_swing'],
+    ['actions', 'set_climate', 'preset', 'samsung_preset'],
   ];
   for (const [kind, id, arg, cap] of pairs) {
     const known = capValues(cap);
-    for (const v of argValues(kind, id, arg)) assert.ok(known.includes(v), `${id}: ${v} not in ${cap}`);
+    for (const v of argValues(kind, id, arg).filter((x) => !(id === 'set_climate' && x === 'keep'))) {
+      assert.ok(known.includes(v), `${id}: ${v} not in ${cap}`);
+    }
   }
   assert.ok(argValues('conditions', 'mode_is', 'mode').includes('off'));
   assert.ok(argValues('actions', 'set_mode', 'mode').includes('off'));
@@ -83,6 +89,65 @@ test('every Flow card text exists in en, nl and fr', () => {
         if (!c[field]) continue;
         for (const lang of ['en', 'nl', 'fr']) assert.ok(c[field][lang], `${c.id}.${field}.${lang}`);
       }
+      for (const a of c.args || []) {
+        for (const lang of ['en', 'nl', 'fr']) {
+          if (a.title) assert.ok(a.title[lang], `${c.id}.${a.name}.title.${lang}`);
+          if (a.placeholder) assert.ok(a.placeholder[lang], `${c.id}.${a.name}.placeholder.${lang}`);
+          for (const v of a.values || []) assert.ok(v.label[lang], `${c.id}.${a.name}.${v.id}.${lang}`);
+        }
+      }
     }
+  }
+});
+
+const TRAITS = {
+  modes: ['cool', 'heat', 'dry', 'fan', 'auto'], min: 16, max: 30, step: 1,
+};
+
+test('climateSettings: Off sends only the mode', () => {
+  const r = climateSettings({
+    mode: 'off', temperature: 21, fan: 'high', swing: 'both', preset: 'quiet',
+  }, TRAITS);
+  assert.deepEqual(r, { values: { samsung_hvac_mode: 'off' }, clamped: false });
+});
+
+test('climateSettings: keep, undefined and an empty temperature leave settings unchanged', () => {
+  assert.deepEqual(climateSettings({
+    mode: 'heat', temperature: undefined, fan: 'keep', swing: undefined, preset: 'keep',
+  }, TRAITS).values, { samsung_hvac_mode: 'heat' });
+  assert.deepEqual(climateSettings({ mode: 'cool', temperature: null }, TRAITS).values, { samsung_hvac_mode: 'cool' });
+  assert.deepEqual(climateSettings({ mode: 'cool', temperature: '' }, TRAITS).values, { samsung_hvac_mode: 'cool' });
+});
+
+test('climateSettings: every value set', () => {
+  assert.deepEqual(climateSettings({
+    mode: 'heat', temperature: 21, fan: 'auto', swing: 'vertical', preset: 'none',
+  }, TRAITS), {
+    values: {
+      samsung_hvac_mode: 'heat', target_temperature: 21, samsung_fan_speed: 'auto', samsung_swing: 'vertical', samsung_preset: 'none',
+    },
+    clamped: false,
+  });
+});
+
+test('climateSettings: rounds to the step and clamps to the range', () => {
+  const at = (temperature, traits = TRAITS) => climateSettings({ mode: 'cool', temperature }, traits);
+  assert.deepEqual(at(21.4), { values: { samsung_hvac_mode: 'cool', target_temperature: 21 }, clamped: false });
+  assert.equal(at(21.5).values.target_temperature, 22);
+  assert.deepEqual(at(35), { values: { samsung_hvac_mode: 'cool', target_temperature: 30 }, clamped: true });
+  assert.deepEqual(at(10), { values: { samsung_hvac_mode: 'cool', target_temperature: 16 }, clamped: true });
+  const half = { ...TRAITS, step: 0.5 };
+  assert.equal(at(21.3, half).values.target_temperature, 21.5);
+  assert.equal(at(21.2, half).values.target_temperature, 21);
+  assert.deepEqual(at(30.2, half), { values: { samsung_hvac_mode: 'cool', target_temperature: 30 }, clamped: false });
+  assert.deepEqual(at(30.4, half), { values: { samsung_hvac_mode: 'cool', target_temperature: 30 }, clamped: true });
+  assert.equal(at('22.5', half).values.target_temperature, 22.5);
+});
+
+test('climateSettings: Fan and Dry leave out the temperature', () => {
+  for (const mode of ['fan', 'dry']) {
+    assert.deepEqual(climateSettings({ mode, temperature: 21, fan: 'low' }, TRAITS).values, {
+      samsung_hvac_mode: mode, samsung_fan_speed: 'low',
+    }, mode);
   }
 });
