@@ -70,10 +70,10 @@ class Connection extends EventEmitter {
     if (this.psk.length !== 32) throw new ConnectionError('Invalid encryption key', 'bad_key');
     await this.openSocket();
     await this.handshake();
-    const hello = parseHelloResponse(await this.request(MSG.HELLO_REQUEST, new Writer()
+    // The reply only confirms the handshake; its contents are not needed.
+    parseHelloResponse(await this.request(MSG.HELLO_REQUEST, new Writer()
       .string(1, this.clientInfo).varint(2, API_VERSION.major).varint(3, API_VERSION.minor)
       .toBuffer(), [MSG.HELLO_RESPONSE]));
-    this.apiVersion = hello;
     this.deviceInfo = parseDeviceInfo(await this.request(MSG.DEVICE_INFO_REQUEST, Buffer.alloc(0), [MSG.DEVICE_INFO_RESPONSE]));
     this.entities = await this.listEntities();
     this.send(MSG.SUBSCRIBE_STATES_REQUEST, Buffer.alloc(0));

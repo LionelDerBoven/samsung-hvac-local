@@ -64,7 +64,6 @@ class Bridge extends EventEmitter {
         return;
       }
       if (!isBridge(info)) throw Object.assign(new Error('Not a Samsung HVAC Local bridge'), { code: 'not_bridge' });
-      this.info = { mac: info.mac, name: info.friendlyName || info.name, version: info.projectVersion };
       this.units = groupUnits(info, conn.entities);
       conn.on('state', (s) => this.onState(s));
       conn.once('close', (err) => this.onClose(conn, err));
@@ -164,10 +163,6 @@ class Bridge extends EventEmitter {
 
   get isSingleSplit() {
     return !!this.units && this.units.indoor.length === 1;
-  }
-
-  value(entity) {
-    return entity ? this.states.get(entity.key) : undefined;
   }
 
   climateCommand(entity, fields) {
