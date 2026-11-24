@@ -1,4 +1,9 @@
 {
+  "0.2.1": {
+    "en": "Fan speed changes now apply reliably when turning off a special mode such as Quiet or WindFree in the same Flow card.",
+    "nl": "Wijzigingen van de ventilatorsnelheid worden nu betrouwbaar toegepast wanneer je in dezelfde Flow-kaart een speciale modus zoals Stil of WindFree uitschakelt.",
+    "fr": "Les changements de vitesse du ventilateur s'appliquent désormais de manière fiable lorsque vous désactivez un mode spécial comme Silencieux ou WindFree dans la même carte Flow."
+  },
   "0.2.0": {
     "en": "New Flow card to set the air conditioner in one go: mode, temperature, fan speed, air direction and special mode. Fields you leave empty or on Unchanged stay as they are.",
     "nl": "Nieuwe Flow-kaart om de airco in één keer in te stellen: modus, temperatuur, ventilatorsnelheid, windrichting en speciale modus. Velden die je leeg laat of op Ongewijzigd zet, blijven zoals ze zijn.",
