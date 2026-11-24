@@ -30,12 +30,17 @@ const OPTIONAL = [
 // alarm_generic (fault) → alarm_problem. Removed from devices paired with an older version.
 const LEGACY = ['onoff.auto_clean', 'alarm_generic'];
 const WINDFREE_MODES = ['cool', 'dry'];
+// ESPHome's NASA protocol packs ENUM_in_fan_mode before ENUM_in_alt_mode, and Samsung indoor units
+// ignore fan changes while a special mode (Quiet, WindFree, ...) is still active. When leaving a
+// preset to 'none' with an explicit fan speed, send the fan speed in a follow-up packet.
+const PRESET_CLEAR_FAN_DELAY_MS = 500;
 
 class IndoorUnitDevice extends Homey.Device {
 
   async onInit() {
     this.unit = null;
     this.outdoor = null;
+    this.fanFollowUpTimer = null;
     this.roleByKey = new Map(); // entity key → role, for this unit only (~20 entries)
     // What the bridge last reported, for Flow triggers. Not the capability values: Homey already sets those when a
     // change comes from Homey itself, before the bridge confirms it. Fixed keys: climate, filter_alarm, auto_clean.
@@ -65,6 +70,7 @@ class IndoorUnitDevice extends Homey.Device {
 
   async onStatus(online, err) {
     if (!online) {
+      this.clearFanFollowUp();
       this.unit = null;
       const reason = err && err.code === 'bad_key' ? 'device.bad_key' : 'device.offline';
       await this.setUnavailable(this.homey.__(reason)).catch(this.error);
@@ -292,7 +298,8 @@ class IndoorUnitDevice extends Homey.Device {
     const entity = this.unit.roles.climate;
     const fields = {};
     let mode = values.samsung_hvac_mode;
-    if (values.onoff === false || mode === 'off') {
+    const turningOff = values.onoff === false || mode === 'off';
+    if (turningOff) {
       fields.mode = 0;
       mode = undefined;
     } else if (mode || values.onoff === true) {
@@ -301,17 +308,44 @@ class IndoorUnitDevice extends Homey.Device {
       Object.assign(fields, command.mode(mode));
     }
     if (values.target_temperature !== undefined) fields.targetTemperature = values.target_temperature;
+    let fanFields = null;
     for (const [cap, kind] of [['samsung_fan_speed', 'fan'], ['samsung_swing', 'swing'], ['samsung_preset', 'preset']]) {
       if (values[cap] === undefined) continue;
       const f = command[kind](values[cap], entity);
       if (!f) throw new Error(this.homey.__('device.not_supported'));
+      if (kind === 'fan') fanFields = f;
       Object.assign(fields, f);
     }
     if (values.samsung_preset === 'windfree') {
       const effective = mode || (this.getCapabilityValue('onoff') ? this.getCapabilityValue('samsung_hvac_mode') : null);
       if (!WINDFREE_MODES.includes(effective)) throw new Error(this.homey.__('device.windfree_mode'));
     }
+    this.clearFanFollowUp();
+    const currentPreset = (this.reported.climate && this.reported.climate.preset)
+      || (this.hasCapability('samsung_preset') ? this.getCapabilityValue('samsung_preset') : null);
+    const deferFan = !turningOff && fanFields && values.samsung_preset === 'none' && currentPreset !== 'none';
+    if (deferFan) {
+      delete fields.fanMode;
+      delete fields.customFanMode;
+    }
     this.guard(() => this.bridge.climateCommand(entity, fields));
+    if (deferFan) {
+      this.fanFollowUpTimer = this.homey.setTimeout(() => {
+        this.fanFollowUpTimer = null;
+        if (!this.bridge || !this.unit || !this.unit.roles.climate) return;
+        try {
+          this.bridge.climateCommand(this.unit.roles.climate, fanFields);
+        } catch (err) {
+          this.error('fan follow-up command failed:', err.message);
+        }
+      }, PRESET_CLEAR_FAN_DELAY_MS);
+    }
+  }
+
+  clearFanFollowUp() {
+    if (!this.fanFollowUpTimer) return;
+    this.homey.clearTimeout(this.fanFollowUpTimer);
+    this.fanFollowUpTimer = null;
   }
 
   /**
@@ -367,6 +401,7 @@ class IndoorUnitDevice extends Homey.Device {
   // ---------- lifecycle ----------
 
   detach() {
+    this.clearFanFollowUp();
     if (!this.bridge) return;
     this.bridge.removeListener('state', this.onBridgeState);
     this.bridge.removeListener('status', this.onBridgeStatus);
